@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The UK household spending divide</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --panel: #ffffff;
+    --ink: #1a1d23;
+    --muted: #5a6270;
+    --accent-above: #c0392b;
+    --accent-below: #2980b9;
+    --accent-london: #8e281d;
+    --line: #e0e3e8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    background: var(--panel);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    padding: 32px;
+  }
+  h1 {
+    font-size: 1.85rem;
+    line-height: 1.2;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin: 0 0 24px 0;
+    max-width: 760px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: end;
+    margin-bottom: 22px;
+  }
+  .control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .control label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  select {
+    min-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+  .toggle {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .toggle button {
+    border: none;
+    background: #f8f9fb;
+    color: var(--muted);
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .toggle button + button { border-left: 1px solid var(--line); }
+  .toggle button.active {
+    background: var(--ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .insight {
+    background: #fff8f0;
+    border-left: 4px solid var(--accent-above);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 20px;
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+  .insight strong { color: var(--accent-above); }
+  .chart-box {
+    position: relative;
+    width: 100%;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(255,255,255,0.98);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.14);
+    font-size: 0.86rem;
+    line-height: 1.45;
+    opacity: 0;
+    transition: opacity 0.08s;
+    max-width: 260px;
+    z-index: 10;
+  }
+  .tooltip .tt-region {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .tooltip .tt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 2px 0;
+  }
+  .tooltip .tt-val { font-weight: 600; }
+  .bar { cursor: pointer; transition: opacity 0.15s; }
+  .bar:hover { opacity: 0.85; }
+  .axis-line, .tick line { stroke: var(--line); }
+  .tick text, .axis-label { fill: var(--muted); font-size: 12px; }
+  .axis-label { font-weight: 600; }
+  .region-label { fill: var(--ink); font-size: 13px; font-weight: 600; }
+  .bar-label { fill: var(--ink); font-size: 12px; font-weight: 600; }
+  .ref-line { stroke: #7f8c8d; stroke-dasharray: 5 4; stroke-width: 1.4; }
+  .ref-label { fill: #7f8c8d; font-size: 12px; font-weight: 700; }
+  .annotation-text { fill: var(--ink); font-size: 13px; font-weight: 700; }
+  .annotation-line { stroke: var(--ink); stroke-width: 1.2; fill: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title">Housing is eating London’s weekly budget alive</h1>
+  <p class="lead" id="subtitle">
+    Weekly household spending on housing, fuel &amp; power by region — three-year average FYE 2023–25. The gap between London and the rest is not a rounding error; it is a second household budget.
+  </p>
+
+  <div class="controls">
+    <div class="control">
+      <label for="catSelect">Spending category</label>
+      <select id="catSelect"></select>
+    </div>
+    <div class="control">
+      <label>Metric</label>
+      <div class="toggle" id="metricToggle">
+        <button data-metric="gbp" class="active">£ per week</button>
+        <button data-metric="index">% of UK average</button>
+      </div>
+    </div>
+    <div class="control">
+      <label>Sort regions</label>
+      <div class="toggle" id="sortToggle">
+        <button data-sort="value" class="active">Highest first</button>
+        <button data-sort="alpha">A–Z</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight" id="insight">
+    London households spend <strong>£182.20 a week</strong> on housing, fuel and power — 62% above the UK average. That single premium is almost enough to cover the average UK household’s entire weekly food bill.
+  </div>
+
+  <div class="chart-box">
+    <svg id="chart" viewBox="0 0 960 520" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+</div>
+
+<script>
+const dataset = [
+  {"Category": "1 Food & non-alcoholic drinks", "United Kingdom": 69.2, "England": 69.5, "North East": 60.5, "North West": 66.4, "Yorkshire and The Humber": 66.0, "East Midlands": 69.3, "West Midlands": 66.4, "East": 74.2, "London": 68.7, "South East": 74.4, "South West": 73.0, "Wales": 66.1, "Scotland": 64.8, "Northern Ireland": 80.9},
+  {"Category": "2 Alcoholic drinks, tobacco & narcotics", "United Kingdom": 11.1, "England": 10.8, "North East": 9.2, "North West": 10.5, "Yorkshire and The Humber": 11.1, "East Midlands": 11.1, "West Midlands": 10.6, "East": 11.8, "London": 8.4, "South East": 12.0, "South West": 12.6, "Wales": 13.5, "Scotland": 10.7, "Northern Ireland": 14.3},
+  {"Category": "3 Clothing & footwear", "United Kingdom": 17.4, "England": 17.6, "North East": 17.5, "North West": 17.3, "Yorkshire and The Humber": 16.3, "East Midlands": 17.0, "West Midlands": 15.5, "East": 20.5, "London": 20.1, "South East": 15.4, "South West": 18.7, "Wales": 16.1, "Scotland": 13.7, "Northern Ireland": 25.5},
+  {"Category": "4 Housing(net)¹, fuel & power", "United Kingdom": 112.5, "England": 117.1, "North East": 82.1, "North West": 95.0, "Yorkshire and The Humber": 97.4, "East Midlands": 103.0, "West Midlands": 98.5, "East": 112.5, "London": 182.2, "South East": 122.4, "South West": 111.9, "Wales": 94.3, "Scotland": 90.0, "Northern Ireland": 76.7},
+  {"Category": "5 Household goods & services", "United Kingdom": 38.3, "England": 39.4, "North East": 35.1, "North West": 38.7, "Yorkshire and The Humber": 40.5, "East Midlands": 34.9, "West Midlands": 31.5, "East": 46.2, "London": 37.8, "South East": 40.0, "South West": 46.4, "Wales": 34.3, "Scotland": 30.0, "Northern Ireland": 38.7},
+  {"Category": "6 Health", "United Kingdom": 9.4, "England": 9.7, "North East": 5.3, "North West": 7.5, "Yorkshire and The Humber": 8.6, "East Midlands": 7.7, "West Midlands": 9.3, "East": 10.5, "London": 10.6, "South East": 12.7, "South West": 11.3, "Wales": 9.3, "Scotland": 6.4, "Northern Ireland": 10.4},
+  {"Category": "7 Transport", "United Kingdom": 88.0, "England": 88.9, "North East": 69.0, "North West": 72.8, "Yorkshire and The Humber": 82.8, "East Midlands": 88.5, "West Midlands": 89.1, "East": 107.3, "London": 71.4, "South East": 110.3, "South West": 98.3, "Wales": 84.7, "Scotland": 78.7, "Northern Ireland": 94.0},
+  {"Category": "8 Communication", "United Kingdom": 21.6, "England": 21.8, "North East": 20.0, "North West": 21.5, "Yorkshire and The Humber": 21.0, "East Midlands": 21.1, "West Midlands": 21.4, "East": 23.6, "London": 21.2, "South East": 22.8, "South West": 22.0, "Wales": 20.7, "Scotland": 21.1, "Northern Ireland": 21.3},
+  {"Category": "9 Recreation & culture", "United Kingdom": 73.4, "England": 73.9, "North East": 64.0, "North West": 68.8, "Yorkshire and The Humber": 71.0, "East Midlands": 64.9, "West Midlands": 74.2, "East": 84.4, "London": 55.6, "South East": 93.3, "South West": 80.1, "Wales": 78.9, "Scotland": 70.2, "Northern Ireland": 60.6},
+  {"Category": "10 Education", "United Kingdom": 6.3, "England": 7.1, "North East": 3.9, "North West": 3.5, "Yorkshire and The Humber": 3.8, "East Midlands": 3.0, "West Midlands": 4.7, "East": 7.2, "London": 12.9, "South East": 11.0, "South West": 7.1, "Wales": 2.2, "Scotland": 2.5, "Northern Ireland": 3.1},
+  {"Category": "11 Restaurants & hotels", "United Kingdom": 44.7, "England": 46.1, "North East": 35.9, "North West": 39.9, "Yorkshire and The Humber": 44.2, "East Midlands": 36.8, "West Midlands": 38.3, "East": 48.0, "London": 54.0, "South East": 52.2, "South West": 52.7, "Wales": 42.1, "Scotland": 33.3, "Northern Ireland": 44.4},
+  {"Category": "12 Miscellaneous goods & services", "United Kingdom": 45.2, "England": 46.6, "North East": 36.6, "North West": 42.0, "Yorkshire and The Humber": 43.2, "East Midlands": 41.0, "West Midlands": 42.4, "East": 54.4, "London": 47.6, "South East": 51.9, "South West": 51.2, "Wales": 39.3, "Scotland": 35.3, "Northern Ireland": 47.8},
+  {"Category": "1-12 All expenditure groups", "United Kingdom": 537.2, "England": 548.4, "North East": 439.2, "North West": 484.1, "Yorkshire and The Humber": 505.9, "East Midlands": 498.3, "West Midlands": 501.9, "East": 600.7, "London": 590.6, "South East": 618.3, "South West": 585.3, "Wales": 501.4, "Scotland": 456.8, "Northern Ireland": 517.7},
+  {"Category": "13 Other expenditure items", "United Kingdom": 85.4, "England": 88.3, "North East": 66.3, "North West": 70.6, "Yorkshire and The Humber": 74.2, "East Midlands": 74.6, "West Midlands": 79.6, "East": 97.7, "London": 105.3, "South East": 106.0, "South West": 92.6, "Wales": 72.6, "Scotland": 71.1, "Northern Ireland": 66.1},
+  {"Category": "Total expenditure", "United Kingdom": 622.6, "England": 636.7, "North East": 505.5, "North West": 554.7, "Yorkshire and The Humber": 580.1, "East Midlands": 572.9, "West Midlands": 581.5, "East": 698.4, "London": 695.9, "South East": 724.2, "South West": 677.9, "Wales": 574.0, "Scotland": 528.0, "Northern Ireland": 583.8},
+  {"Category": "Total expenditure per person", "United Kingdom": 268.1, "England": 271.6, "North East": 228.9, "North West": 243.0, "Yorkshire and The Humber": 252.7, "East Midlands": 240.3, "West Midlands": 241.7, "East": 297.5, "London": 288.2, "South East": 305.3, "South West": 295.7, "Wales": 254.6, "Scotland": 250.8, "Northern Ireland": 239.0}
+];
+
+const EXCLUDE = new Set(["United Kingdom", "England"]);
+const UK_KEY = "United Kingdom";
+const regionKeys = Object.keys(dataset[0]).filter(k => k !== "Category" && !EXCLUDE.has(k));
+const categories = dataset.map(d => d.Category);
+
+const state = {
+  category: "4 Housing(net)¹, fuel & power",
+  metric: "gbp",
+  sort: "value"
+};
+
+const svg = document.getElementById("chart");
+const tooltip = document.getElementById("tooltip");
+const catSelect = document.getElementById("catSelect");
+const metricButtons = document.querySelectorAll("#metricToggle button");
+const sortButtons = document.querySelectorAll("#sortToggle button");
+
+function shortCat(cat) {
+  return cat.replace(/^[\d\-]+\s*/, "").replace(/\u00b9/g, "").trim();
+}
+
+function fmtMoney(n) {
+  return "£" + n.toFixed(1);
+}
+
+function setupControls() {
+  categories.forEach((c, i) => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    catSelect.appendChild(opt);
+  });
+  catSelect.value = state.category;
+
+  catSelect.addEventListener("change", e => {
+    state.category = e.target.value;
+    render();
+  });
+
+  metricButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.metric = btn.dataset.metric;
+      metricButtons.forEach(b => b.classList.toggle("active", b === btn));
+      render();
+    });
+  });
+
+  sortButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.sort = btn.dataset.sort;
+      sortButtons.forEach(b => b.classList.toggle("active", b === btn));
+      render();
+    });
+  });
+
+  svg.addEventListener("mousemove", e => {
+    const r = e.target.dataset.region;
+    if (r) {
+      showTooltip(e, r);
+    } else {
+      hideTooltip();
+    }
+  });
+  svg.addEventListener("mouseleave", hideTooltip);
+}
+
+function getRow() {
+  return dataset.find(d => d.Category === state.category) || dataset[0];
+}
+
+function linearScale(domain, range) {
+  return v => range[0] + (v - domain[0]) / (domain[1] - domain[0]) * (range[1] - range[0]);
+}
+
+function bandScale(count, range) {
+  const step = (range[1] - range[0]) / count;
+  return { y: i => range[0] + i * step, bandwidth: step * 0.62, step };
+}
+
+function render() {
+  const row = getRow();
+  const ukVal = row[UK_KEY] || 0;
+  const items = regionKeys.map(region => {
+    const val = (typeof row[region] === "number") ? row[region] : 0;
+    return { region, val, index: ukVal ? (val / ukVal) * 100 : 0 };
+  });
+
+  if (state.sort === "value") {
+    items.sort((a, b) => b.val - a.val);
+  } else {
+    items.sort((a, b) => a.region.localeCompare(b.region));
+  }
+
+  const margin = { top: 36, right: 150, bottom: 54, left: 178 };
+  const W = 960, H = 520;
+  const width = W - margin.left - margin.right;
+  const height = H - margin.top - margin.bottom;
+
+  const maxVal = Math.max(...items.map(d => d.val));
+  const maxIndex = Math.max(...items.map(d => d.index));
+  const domain = state.metric === "gbp" ? [0, maxVal * 1.18] : [0, maxIndex * 1.14];
+  const x = linearScale(domain, [0, width]);
+  const refVal = state.metric === "gbp" ? ukVal : 100;
+
+  const { y, bandwidth } = bandScale(items.length, [margin.top, H - margin.bottom]);
+
+  svg.innerHTML = "";
+
+  // Reference line
+  const refX = x(refVal);
+  if (refX >= 0 && refX <= width + margin.left) {
+    const refLine = createSVG("line", {
+      x1: margin.left + refX, y1: margin.top,
+      x2: margin.left + refX, y2: H - margin.bottom,
+      class: "ref-line"
+    });
+    svg.appendChild(refLine);
+    const refLabel = createSVG("text", {
+      x: margin.left + refX + 6, y: margin.top + 14,
+      class: "ref-label"
+    });
+    refLabel.textContent = state.metric === "gbp" ? "UK average" : "UK average";
+    svg.appendChild(refLabel);
+  }
+
+  // X axis baseline & ticks
+  const baseline = createSVG("line", {
+    x1: margin.left, y1: H - margin.bottom,
+    x2: W - margin.right, y2: H - margin.bottom,
+    class: "axis-line"
+  });
+  svg.appendChild(baseline);
+
+  const tickCount = 5;
+  for (let i = 0; i <= tickCount; i++) {
+    const t = domain[0] + (domain[1] - domain[0]) * (i / tickCount);
+    const tx = margin.left + x(t);
+    const tick = createSVG("line", { x1: tx, y1: H - margin.bottom, x2: tx, y2: H - margin.bottom + 5, class: "tick" });
+    svg.appendChild(tick);
+    const lab = createSVG("text", {
+      x: tx, y: H - margin.bottom + 20,
+      "text-anchor": "middle", class: "tick text"
+    });
+    lab.textContent = state.metric === "gbp" ? fmtMoney(t) : Math.round(t) + "%";
+    svg.appendChild(lab);
+  }
+
+  const xAxisLabel = createSVG("text", {
+    x: W - margin.right - 6, y: H - margin.bottom + 38,
+    "text-anchor": "end", class: "axis-label"
+  });
+  xAxisLabel.textContent = state.metric === "gbp" ? "£ per household per week" : "% of UK average";
+  svg.appendChild(xAxisLabel);
+
+  // Bars & labels
+  items.forEach((d, i) => {
+    const barVal = state.metric === "gbp" ? d.val : d.index;
+    const barW = x(barVal);
+    const cx = margin.left;
+    const cy = y(i);
+    const isAbove = state.metric === "gbp" ? d.val > ukVal : d.index > 100;
+    const fill = d.region === "London" ? (isAbove ? "#8e281d" : "#1f5f8b") : (isAbove ? "#c0392b" : "#2980b9");
+
+    const rect = createSVG("rect", {
+      x: cx, y: cy,
+      width: barW, height: bandwidth,
+      rx: 4, ry: 4,
+      fill: fill,
+      class: "bar",
+      "data-region": d.region
+    });
+    svg.appendChild(rect);
+
+    const regionLab = createSVG("text", {
+      x: margin.left - 12, y: cy + bandwidth / 2 + 4,
+      "text-anchor": "end", class: "region-label"
+    });
+    regionLab.textContent = d.region;
+    svg.appendChild(regionLab);
+
+    const valLab = createSVG("text", {
+      x: cx + barW + 7, y: cy + bandwidth / 2 + 4,
+      class: "bar-label"
+    });
+    valLab.textContent = state.metric === "gbp" ? fmtMoney(d.val) : Math.round(d.index) + "%";
+    svg.appendChild(valLab);
+  });
+
+  // Annotation for top region
+  const top = items[0];
+  const topVal = state.metric === "gbp" ? top.val : top.index;
+  const topX = margin.left + x(topVal);
+  const topY = y(0) + bandwidth / 2;
+  const pctDiff = ukVal ? Math.round(((top.val - ukVal) / ukVal) * 100) : 0;
+  const above = pctDiff >= 0;
+  let note;
+  if (state.metric === "gbp") {
+    note = `${top.region}: ${fmtMoney(top.val)} — ${Math.abs(pctDiff)}% ${above ? "above" : "below"} UK avg`;
+  } else {
+    note = `${top.region}: ${Math.round(top.index)}% of UK average`;
+  }
+
+  const noteGroup = createSVG("g", { class: "annotation" });
+  const text = createSVG("text", {
+    x: topX + (topX > W - margin.right - 180 ? -10 : 10),
+    y: topY - 12,
+    "text-anchor": topX > W - margin.right - 180 ? "end" : "start",
+    class: "annotation-text"
+  });
+  text.textContent = note;
+  noteGroup.appendChild(text);
+  const line = createSVG("line", {
+    x1: topX + (topX > W - margin.right - 180 ? -4 : 4),
+    y1: topY - 4,
+    x2: topX + (topX > W - margin.right - 180 ? -4 : 4),
+    y2: topY + bandwidth / 2 + 2,
+    class: "annotation-line"
+  });
+  noteGroup.appendChild(line);
+  svg.appendChild(noteGroup);
+
+  updateText(items, ukVal);
+}
+
+function createSVG(tag, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    el.setAttribute(k, v);
+  }
+  return el;
+}
+
+function updateText(items, ukVal) {
+  const catName = shortCat(state.category).toLowerCase();
+  const top = items[0];
+  const bottom = items[items.length - 1];
+  const title = document.getElementById("title");
+  const subtitle = document.getElementById("subtitle");
+  const insight = document.getElementById("insight");
+
+  title.textContent = state.category === "4 Housing(net)¹, fuel & power"
+    ? "Housing is eating London’s weekly budget alive"
+    : `Regional spending on ${catName}: the gap is real`;
+
+  subtitle.textContent = `Weekly household spending on ${catName} by region — three-year average FYE 2023–25. The bars show each region relative to the UK average.`;
+
+  let html = "";
+  if (state.category === "4 Housing(net)¹, fuel & power") {
+    html = `London households spend <strong>${fmtMoney(top.val)} a week</strong> on housing, fuel and power — ${Math.round(top.index - 100)}% above the UK average. That single premium is almost enough to cover the average UK household’s entire weekly food bill.`;
+  } else if (state.category === "7 Transport") {
+    html = `Londoners spend far less on transport than the UK average despite its size — public transport and lower car ownership bend the curve. Meanwhile the South East and East spend heavily on commuting.`;
+  } else if (state.category === "9 Recreation & culture") {
+    html = `Londoners spend the least on recreation &amp; culture of any region, even as the South East leads. High housing costs may be squeezing the fun money out of the capital.`;
+  } else if (state.category === "Total expenditure per person") {
+    html = `Spend per person is highest in the <strong>South East</strong> and lowest in the North East — a £${(top.val - bottom.val).toFixed(1)} weekly gap in living standards.`;
+  } else {
+    const diff = top.val - bottom.val;
+    html = `${top.region} spends the most on ${catName} at <strong>${fmtMoney(top.val)}</strong> per week; ${bottom.region} spends the least at ${fmtMoney(bottom.val)}. The gap is ${fmtMoney(diff)} a week.`;
+  }
+  insight.innerHTML = html;
+}
+
+function showTooltip(e, region) {
+  const row = getRow();
+  const ukVal = row[UK_KEY] || 0;
+  const val = (typeof row[region] === "number") ? row[region] : 0;
+  const index = ukVal ? (val / ukVal) * 100 : 0;
+  const diff = val - ukVal;
+
+  const rect = svg.getBoundingClientRect();
+  const x = e.clientX - rect.left + 12;
+  const y = e.clientY - rect.top + 12;
+
+  tooltip.style.left = Math.min(x, rect.width - 270) + "px";
+  tooltip.style.top = Math.min(y, rect.height - 120) + "px";
+  tooltip.style.opacity = "1";
+
+  tooltip.innerHTML = `
+    <div class="tt-region">${region}</div>
+    <div class="tt-row"><span>Category</span> <span>${shortCat(state.category)}</span></div>
+    <div class="tt-row"><span>Spend</span> <span class="tt-val">${fmtMoney(val)}/wk</span></div>
+    <div class="tt-row"><span>UK average</span> <span>${fmtMoney(ukVal)}/wk</span></div>
+    <div class="tt-row"><span>Difference</span> <span class="tt-val">${diff >= 0 ? "+" : ""}${fmtMoney(diff)}/wk</span></div>
+    <div class="tt-row"><span>Index</span> <span class="tt-val">${Math.round(index)}% of UK</span></div>
+  `;
+}
+
+function hideTooltip() {
+  tooltip.style.opacity = "0";
+}
+
+setupControls();
+render();
+</script>
+</body>
+</html>

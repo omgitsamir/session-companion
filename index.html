@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<title>Session Companion v3</title>
+<style>
+:root{--navy:#1f3b5b;--acc:#2f6db3;--amber:#d97706;--red:#b91c1c;--bg:#f6f7f9;--card:#fff;--line:#d9dee5}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 "Segoe UI",Arial,sans-serif;background:var(--bg);color:#1c2733}
+header{background:var(--navy);color:#fff;padding:8px 16px;display:flex;gap:16px;align-items:center}
+header .t{font-weight:700}header .sub{opacity:.8;font-size:13px}header .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+button{background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 14px;font-size:14px;cursor:pointer}
+button.sec{background:#e8edf3;color:var(--navy)}button.warn{background:var(--amber)}button:disabled{opacity:.45;cursor:default}
+main{padding:14px;max-width:1500px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.welcome p{font-size:16.5px;line-height:1.55}
+.welcome b{color:#14365c}
+.instr{background:#eef4fb;border-left:4px solid var(--acc);padding:10px 14px;border-radius:6px;margin-bottom:8px;font-size:15px}
+.ctx{background:#f1f7ee;border-left:4px solid #5a8f4f;padding:8px 12px;border-radius:6px;margin-bottom:8px;font-size:14px}
+.toolrow{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.stimwrap{display:flex;justify-content:center}.stimwrap img{max-width:100%;max-height:74vh;border:1px solid var(--line);border-radius:6px}
+img.zoom{cursor:zoom-in}
+iframe.stim{width:100%;height:78vh;border:1px solid var(--line);border-radius:6px;background:#fff}
+.cols{display:grid;grid-template-columns:420px 1fr;gap:12px;align-items:start}
+.itemlist{max-height:74vh;overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.itemlist .cat{padding:6px 10px;font-weight:700;font-size:12px;letter-spacing:.04em;color:#5b6b7d;background:#f0f3f7;position:sticky;top:0;z-index:1}
+.it{border-top:1px solid #eef1f5}
+.it .hd{padding:7px 10px;cursor:pointer;font-size:14px}
+.it .hd:hover{background:#f2f7fd}
+.it.keyed .hd{background:#fff7d6;font-weight:600}
+.it.open .hd{background:#e8f1fc;font-weight:600}
+.it .def{display:none;padding:4px 12px 10px;font-size:13.5px;color:#39475a;background:#fbfcff;border-top:1px dashed #e4e9f0}
+.it.open .def{display:block}
+.it .def .meta{color:#5b6b7d;font-size:11.5px;margin-bottom:3px}
+.sibs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.sibs figure{margin:0;border:1px solid var(--line);border-radius:8px;padding:6px;background:#fff}
+.sibs img{width:100%;border-radius:4px}.sibs figcaption{font-size:12px;color:#5b6b7d;text-align:center;padding-top:4px}
+.sibs .primary{outline:3px solid var(--navy)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.thumbs img{height:64px;border:2px solid var(--line);border-radius:6px;cursor:pointer;background:#fff}
+.thumbs img.on{border-color:var(--navy);box-shadow:0 0 0 2px #cddcee}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:20px;padding:2px 10px;border-radius:6px;background:#e8edf3;color:var(--navy)}
+.timer.amber{background:#fde9cf;color:var(--amber)}.timer.over{background:#fbdada;color:var(--red)}
+.hgrid{display:grid;grid-template-columns:1fr 360px;gap:12px;align-items:start}
+.ticks .row{display:flex;gap:6px;align-items:center;padding:5px 6px;border-top:1px solid #eef1f5;font-size:13.5px}
+.ticks .row .nm{flex:1}.ticks .row .arg{color:#8a6d1a;font-size:11px}
+.tick{width:30px;height:26px;border-radius:5px;border:1px solid var(--line);background:#f4f6f9;color:#43536a;font-size:12px;cursor:pointer}
+.tick.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:6px;padding:8px;font:13.5px/1.4 inherit}
+.ifield{padding:9px 0;border-top:1px solid #eef1f5}
+.ifield:first-child{border-top:0}
+.ilab{font-weight:600;margin-bottom:5px;font-size:14.5px}
+.iscale label{margin:0 9px;font-size:14px}
+.cue{background:#fbf6ea;border:1px solid #ecd9a8;border-radius:8px;padding:10px;font-size:14px;margin-bottom:10px}
+.deck button{margin:3px 4px 0 0;background:#e8edf3;color:var(--navy);font-size:12.5px;text-align:left}
+.deck button .tag{font-size:10px;opacity:.6;margin-left:5px}
+.ixtag{color:var(--acc);font-weight:600}
+.nudges button{margin:3px 4px 0 0;background:#e8edf3;color:var(--navy);font-size:13px}
+.slider{display:flex;align-items:center;gap:12px;margin:14px 0}
+.slider input{flex:1}.slider .val{font-weight:700;width:28px;text-align:center;font-size:18px}
+table.order{border-collapse:collapse;font-size:14px}table.order td,table.order th{border:1px solid var(--line);padding:4px 9px}
+table.data{border-collapse:collapse;font-size:12.5px;white-space:nowrap}
+table.data td,table.data th{border:1px solid var(--line);padding:2px 7px}table.data th{background:#f0f3f7;position:sticky;top:0}
+.small{font-size:12.5px;color:#5b6b7d}.pill{display:inline-block;background:#eef1f5;border-radius:99px;padding:2px 10px;font-size:12px;color:#43536a;margin-right:6px}
+#overlay{position:fixed;inset:0;background:rgba(15,25,40,.82);display:none;z-index:50;align-items:center;justify-content:center;padding:24px}
+#overlay.show{display:flex}
+#overlay .box{background:#fff;border-radius:10px;max-width:96vw;max-height:92vh;overflow:auto;position:relative;padding:16px}
+#overlay .box.imgbox{background:transparent;padding:0;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+#overlay img{max-width:92vw;border-radius:6px;background:#fff}
+#overlay .box.livebox{padding:0;width:94vw;height:90vh;overflow:hidden;background:#fff}
+#overlay .livebox iframe{width:100%;height:100%;border:0;border-radius:10px;background:#fff}
+#overlay pre{margin:0;font:12.5px/1.45 ui-monospace,Consolas,monospace;white-space:pre;max-width:92vw}
+#overlay .x{position:fixed;top:14px;right:20px;font-size:26px;color:#fff;background:rgba(0,0,0,.45);border-radius:99px;width:40px;height:40px;line-height:38px;text-align:center;cursor:pointer;z-index:51}
+</style>
+</head>
+<body>
+<header>
+  <span class="t">Session Companion v3</span><span class="sub" id="roleTag"></span>
+  <span class="pill" id="pidTag"></span><span class="pill" id="stageTag"></span>
+  <span class="right">
+    <span class="timer" id="timer" style="display:none">0:00</span>
+    <button class="sec" id="exportBtn" style="display:none">Export JSON</button>
+  </span>
+</header>
+<main id="app"></main>
+<div id="overlay"><span class="x" id="ovX">×</span><div class="box" id="ovBox"></div></div>
+<script>
+/* ======= CONFIG — all participant-facing wording lives here; edit freely (light HTML like <b> allowed) ======= */
+const CONFIG = {
+ welcome_title: "Welcome, and thank you for taking part",
+ welcome_body: [
+  "In this session you will look at <b>8 data visualisations</b>, one at a time. Each was produced by an <b>AI system (a large language model, LLM)</b> from a real public dataset.",
+  "<b>Visualisations are never neutral.</b> Whoever — or whatever — makes them chooses what to show, what to leave out, what to emphasise, and how to frame it. For each one, tell us what you notice: what <b>rhetorical or persuasive choices</b> have been made, and what is this visualisation trying to make you <b>think, feel, or believe</b>? Think aloud — there are no right or wrong answers. For example: you may notice things that seem <b>deliberately added or left out</b>, design choices that <b>draw your attention</b> to one thing — or quietly pull it away from another — or wording that nudges how you read the numbers.",
+  "Afterwards we will show you a set of concepts and discuss which of them you saw."],
+ elicit_instr: "Take your time with this visualisation. What <b>rhetorical or persuasive choices</b> has its maker made — in what is shown, left out, emphasised, worded, or framed? What is it trying to make you <b>think, feel, or believe</b>?",
+ reveal_instr: "These are the <b>choices we identified</b> in this visualisation. Click any one to read what it means, and say whether you agree it is really here.",
+ variant_instr: "The same instruction and data were given to <b>three other AI models</b>. Which rendering do you find most persuasive, and why? Click any image to enlarge it.",
+ onec_instr: "This is the <b>full set of 56 concepts</b>. Browse freely — click any to read its definition. Click a chart thumbnail above to see which concepts it carried. Is anything missing, redundant, or wrongly placed?",
+ onec_scale1: "How well does this set of concepts cover the ways a visualisation can persuade? (1 = very poorly, 7 = very well)",
+ onec_scale2: "How clear and distinct are the concepts as a set? (1 = not at all, 7 = extremely)",
+ debrief_title: "Thank you — that completes the interview",
+ debrief_body: [
+  "Your observations and ratings from today go directly into revising the taxonomy: what you spotted, what you challenged, and what you said was worth reporting to users.",
+  "One short follow-up will come by email once every interview is done: a brief structured questionnaire (roughly 10–15 minutes) showing the revised taxonomy, so you can confirm or push back on the changes the panel's feedback produced. That is the final step.",
+  "Before we finish — any last thoughts, on any of the charts or the concepts, that we haven't captured?"],
+ debrief_close: "Thank you again for your time and expertise.",
+ /* One-line scene-setting shown above each chart, so no session time is lost decoding the domain. */
+ dataset_context: {
+  DA: "Public health across England — one row for each of <b>153 local authorities</b>: life expectancy, early-death rates, deprivation, and a few related indicators (mostly 2024–25 figures).",
+  DB: "Road traffic in Great Britain — <b>billions of vehicle miles driven each quarter</b> from 1994 to early 2026, split by vehicle type and road class.",
+  DC: "Household spending across the UK — average <b>£ per household per week</b> in each region, split into everyday categories (food, housing, transport…), averaged over 2023–25."},
+ da_wider_note: "A larger version of the health dataset (32 indicators). <b>The AI systems never saw this file</b> — they were given only the smaller selection.",
+ intake_instr: "Before we look at any charts \u2014 six quick questions about your background. There are no wrong answers; this simply helps us describe the expert panel.",
+ intake: [
+  {id:"role", label:"Your current role", type:"radio", options:["Academic researcher","PhD researcher","Practitioner","Other"]},
+  {id:"years_vis", label:"Years of experience with data visualisation", type:"number", min:0, max:60},
+  {id:"fam_rhet", label:"Familiarity with rhetorical / persuasive visualisation", type:"scale", lo:"Not at all familiar", hi:"Extremely familiar"},
+  {id:"fam_llm", label:"Familiarity with AI/LLM-generated charts", type:"scale", lo:"Not at all familiar", hi:"Extremely familiar"},
+  {id:"read_hd", label:"Had you read the paper by Hullman & Diakopoulos (2011) before this session?", type:"radio", options:["Yes \u2014 before the invitation","Yes \u2014 after the invitation","Skimmed it","No"]},
+  {id:"concept_fam", label:"Was the idea of \u2018rhetorical choices in charts\u2019, as introduced in the invitation email, already familiar to you?", type:"radio", options:["Yes","Somewhat","No"]},
+ ],
+ nudges: ["What stands out to you first?","Anything you find persuasive — or suspicious?","What would you tell a friend this chart says?","Take your time — anything else?"],
+ /* Per-item elicitation probes (researcher only, phrased with NO taxonomy vocabulary).
+    Each stimulus's deck = the probes for its keyed items + a few decoys. */
+ item_probes: {
+  T01:"Can you tell where this data comes from?", T02:"Are all the measures here clearly defined?",
+  T03:"What does it assume you already know?", T04:"Anything about what things are compared against, or where lines are drawn?",
+  T05:"Is anything left out, do you think?", T06:"Who decides what's included here — you, or the page?",
+  T07:"Of everything that might be in the data, why these variables?", T08:"What happened to the detail behind these numbers?",
+  T09:"What role do the headline numbers or summary lines play?", T10:"How have things been grouped or combined?",
+  T11:"What work is the source line doing?", T12:"Anything pointing you beyond this chart?",
+  T13:"Anything explaining how the data was collected or processed?", T14:"What outside context is being supplied for you?",
+  T15:"Anything called out as an exception or a correction?", T16:"How is uncertainty handled, if at all?",
+  T17:"Any caveats about precision, or about what you're allowed to conclude?", T18:"Where does solid data end here?",
+  T19:"How confident is the language about its own conclusions?", T20:"Who is speaking to you here — and why should you trust them?",
+  T21:"Is there a personal voice in this? What is it doing?", T22:"Any styling here that isn't strictly needed?",
+  T23:"How easy is it to compare exact values?", T24:"Is the most important comparison the easiest thing to see?",
+  T25:"Does anything read as causing something else?", T26:"Anything about how the axes are set up?",
+  T27:"Does the layout itself suggest a direction or a journey?", T28:"Is the text styling itself carrying any meaning?",
+  T29:"What are the colours telling you to feel?", T30:"Anywhere your eye struggles — and might that be deliberate?",
+  T31:"What stands out most, and why?", T32:"Does everything shown belong to the same story?",
+  T33:"How are things visually grouped or partitioned?", T34:"Do the different text styles form a system of kinds?",
+  T35:"Is anything marked as significant, or a trend asserted?", T36:"Is anything said or shown more than once?",
+  T37:"Which words or numbers were you meant to remember?", T38:"What is the title doing, grammatically?",
+  T39:"Is any punctuation doing extra work?", T40:"Does the language match the size of what's shown?",
+  T41:"Is anything explained through a comparison to everyday life?", T42:"Any figurative language? What does it smuggle in?",
+  T43:"Are any phrases deliberately mirroring each other?", T44:"Any 'like' or 'as' comparisons?",
+  T45:"Could the title mean more than one thing?", T46:"Who is 'you' here?",
+  T47:"What is the interactivity inviting you to do?", T48:"Whose point of view do the annotations take?",
+  T49:"What did it choose to show you first?", T50:"What is everything being measured against?",
+  T51:"What comes first — and does that matter?", T52:"What did the motion leave you with?",
+  T53:"What is it suggesting you go and look up?", T54:"Are you being told what pattern to find?",
+  T55:"What does the search box let you privilege?", T56:"What do the menu options steer you toward?"
+ },
+ decoy_probes: ["Anything about the axis ranges?","Would a different chart type change your reading?",
+  "How recent do you think this data is?","Anything about the legend?","How would a non-expert read this?",
+  "Anything odd about the gridlines or background?","Is the level of detail right?","Would you change the layout?"],
+ decoys_per_stimulus: 3,
+ /* Reveal-phase situational probes ({ORG} is filled per dataset). */
+ reveal_probes: [
+  "Which of these would you tell a user about, here?",
+  "Imagine you're an analyst at {ORG} who has just generated this chart with an AI. Would knowing about these hidden choices help you do the job better — which ones?",
+  "Would a CEO, a minister, or another decision-maker generating this for themselves need to be told about each of these? Which could be skipped?",
+  "Which of these, if left unreported, could mislead someone acting on this chart?",
+  "Are any of these harmless craft rather than persuasion?"],
+ dataset_orgs: { DA:"a local public-health team", DB:"the Department for Transport", DC:"a household-finances policy unit" },
+ /* Inspection: participants can open the dataset and the generated source code.
+    code_at: "reveal" (default) or "elicit" — "elicit" makes the code button available in the unprimed phase too. */
+ code_at: "reveal",
+ data_files: { DA:"bundle/data/DA.csv", DB:"bundle/data/DB.csv", DC:"bundle/data/DC.csv" },
+ data_samples: { DA:"bundle/data/DA_sample.json", DB:"bundle/data/DB_sample.json", DC:"bundle/data/DC_sample.json" },
+ cues: {
+  setup:"Select the participant ID (rota below), then Start.",
+  intake:"Participant answers on their own screen; in remote sessions, ask each question aloud and fill it in here \u2014 either side can type. Check all six are answered, then Continue.",
+  welcome:"Read alongside the participant. Confirm consent form done. Do not mention item counts or the taxonomy.",
+  elicit:"SILENT phase. Tick U for every keyed item they spot unprimed. If they stall, use the stimulus probes below — tagged ones target keyed items, 'decoy' ones don't. Talking only, no writing.",
+  reveal:"Walk the listed items top to bottom: endorse present (E)? Then the situational probes — tick R for every item they say is worth reporting. Code and data inspection are open to them now.",
+  variant:"Brief. One preference + one why. Do not analyse each sibling.",
+  onec:"Full-map flexing. Run the two scales first, then the WHAT discussion: merges, removals, additions, hierarchy. HOW-to-report only if time remains.",
+  debrief:"Thank them, brief the Round-2 questionnaire (short, emailed, confirms the revision), take any final notes, then Finish & export."},
+ phase_seconds: {elicit:180, reveal:120, variant:60}
+};
+/* ==================================================================================================== */
+const HOST = new URLSearchParams(location.search).has("host");
+document.getElementById("roleTag").textContent = HOST ? "RESEARCHER CONSOLE" : "participant display";
+let bundle={}, S=null, tick=null, phaseStart=null;
+const $=s=>document.querySelector(s), app=$("#app");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("sc3") : null;
+function send(m){ m._t=Date.now(); if(bc) bc.postMessage(m); localStorage.setItem("sc3_msg", JSON.stringify(m)); }
+function onMsg(f){ if(bc) bc.onmessage=e=>f(e.data); window.addEventListener("storage",e=>{ if(e.key==="sc3_msg"&&e.newValue) f(JSON.parse(e.newValue)); }); }
+async function loadBundle(){
+ const [man,defs,alloc]=await Promise.all(["bundle/pool_manifest.json","bundle/defs56.json","bundle/allocation.json"].map(u=>fetch(u).then(r=>r.json())));
+ bundle={man,defs,alloc}; bundle.bySlot=Object.fromEntries(man.slots.map(s=>[s.slot,s]));
+}
+/* ---------------- overlay: lightbox / data / code ---------------- */
+const ov=$("#overlay"), ovBox=$("#ovBox");
+function openOverlay(html,mode){ ovBox.className="box"+(mode==="img"?" imgbox":mode==="live"?" livebox":""); ovBox.innerHTML=html; ov.classList.add("show"); }
+function closeOverlay(){ ov.classList.remove("show"); ovBox.innerHTML=""; }
+$("#ovX").onclick=closeOverlay;
+ov.addEventListener("click",e=>{ if(e.target===ov) closeOverlay(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeOverlay(); });
+document.addEventListener("click",e=>{
+ const im=e.target.closest("img.zoom"); if(!im) return;
+ if(im.dataset.live){
+  openOverlay(`<iframe src="${im.dataset.live}"></iframe>`,"live");
+  if(!HOST) send({type:"plog",ev:"live_open",detail:im.dataset.tag||im.dataset.live});
+ } else {
+  openOverlay(`<img src="${im.src}">`,"img");
+  if(!HOST) send({type:"plog",ev:"zoom",detail:im.dataset.tag||im.src.split("/").pop()});
+ }
+});
+function parseCSV(text){ // small quote-aware parser
+ const rows=[]; let row=[], cur="", q=false;
+ for(let i=0;i<text.length;i++){ const c=text[i];
+  if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+  else if(c==='"') q=true;
+  else if(c===","){ row.push(cur); cur=""; }
+  else if(c==="\n"||c==="\r"){ if(c==="\r"&&text[i+1]==="\n") i++; row.push(cur); cur=""; if(row.length>1||row[0]!=="") rows.push(row); row=[]; }
+  else cur+=c; }
+ if(cur!==""||row.length) { row.push(cur); rows.push(row); }
+ return rows;
+}
+function tableHTML(hdr,rows,note){
+ return `<div style="margin-bottom:8px;font-size:14px">${note}</div><div style="max-height:78vh;overflow:auto"><table class="data"><tr>${hdr.map(h=>`<th>${esc(h)}</th>`).join("")}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</table></div>`;
+}
+async function loadCsv(path){ const r=await fetch(path); if(!r.ok) throw 0; const rows=parseCSV(await r.text()); return {hdr:rows[0], body:rows.slice(1)}; }
+async function showData(ds){
+ if(!HOST) send({type:"plog",ev:"inspect_data",detail:ds});
+ const ctx=CONFIG.dataset_context[ds]||"";
+ try{ const {hdr,body}=await loadCsv(CONFIG.data_files[ds]);
+  const lead=`${ctx}<br><b>This is the exact file the AI systems were given</b> <span class="small">(${body.length} rows × ${hdr.length} columns${body.length>200?"; first 200 shown":""})</span>.`;
+  const extra = ds==="DA" ? `<div style="margin-top:8px"><button class="sec" id="widerBtn">More data existed — see what the AI didn't get</button></div>` : "";
+  openOverlay(tableHTML(hdr, body.slice(0,200), lead)+extra);
+  const wb=document.getElementById("widerBtn");
+  if(wb) wb.onclick=async()=>{ if(!HOST) send({type:"plog",ev:"inspect_data",detail:"DA_full"});
+   const w=await loadCsv("bundle/data/DA_full.csv");
+   openOverlay(tableHTML(w.hdr, w.body.slice(0,200), `${CONFIG.da_wider_note} <span class="small">(${w.body.length} rows × ${w.hdr.length} columns${w.body.length>200?"; first 200 shown":""})</span>`)+`<div style="margin-top:8px"><button class="sec" id="sliceBtn">← Back to the AI's file</button></div>`);
+   document.getElementById("sliceBtn").onclick=()=>showData("DA");
+  };
+  return;
+ }catch(e){}
+ try{ const r=await fetch(CONFIG.data_samples[ds]); if(!r.ok) throw 0;
+  const recs=await r.json(); const hdr=Object.keys(recs[0]);
+  openOverlay(tableHTML(hdr, recs.map(o=>hdr.map(h=>o[h])), `${ctx}<br><span class="small">A ${recs.length}-row sample of the file the AI systems were given (full file not bundled on this machine).</span>`)); return;
+ }catch(e){ openOverlay(`<p>The dataset file for ${ds} is not bundled on this machine.</p>`); }
+}
+async function showCode(slot){
+ if(!HOST) send({type:"plog",ev:"inspect_code",detail:slot.slot});
+ const ext = slot.interactive ? "html" : "py";
+ try{ const r=await fetch(`bundle/code/${slot.slot}.${ext}`); if(!r.ok) throw 0;
+  const src=await r.text();
+  openOverlay(`<div class="small" style="margin-bottom:6px">The code the AI produced for this chart (${ext==="py"?"Python":"HTML/JavaScript"}; comments removed uniformly across all charts).</div><pre>${esc(src)}</pre>`);
+ }catch(e){ openOverlay(`<p>Code for ${slot.slot} is not bundled.</p>`); }
+}
+function inspectRow(sl, sub){
+ const codeOK = (sub==="reveal") || (CONFIG.code_at==="elicit");
+ return `<div class="toolrow"><button class="sec" data-act="data">Inspect the data</button>${codeOK?`<button class="sec" data-act="code">Inspect the code</button>`:""}</div>`;
+}
+function wireInspect(sl){
+ app.querySelectorAll("[data-act=data]").forEach(b=>b.onclick=()=>showData(sl.dataset));
+ app.querySelectorAll("[data-act=code]").forEach(b=>b.onclick=()=>showCode(sl));
+}
+/* ---------------- intake form (shared) ---------------- */
+function intakeFieldHTML(f,val){
+ if(f.type==="number") return `<div class="ifield"><div class="ilab">${f.label}</div><input type="number" data-f="${f.id}" min="${f.min}" max="${f.max}" value="${val??""}" style="width:100px;padding:5px;border:1px solid var(--line);border-radius:5px"></div>`;
+ if(f.type==="scale"){ let h=`<div class="ifield"><div class="ilab">${f.label}</div><div class="iscale"><span class="small">${f.lo}</span>`;
+  for(let i=1;i<=5;i++) h+=`<label><input type="radio" name="i_${f.id}" data-f="${f.id}" value="${i}" ${String(val)===String(i)?"checked":""}> ${i}</label>`;
+  return h+`<span class="small">${f.hi}</span></div></div>`; }
+ return `<div class="ifield"><div class="ilab">${f.label}</div>${f.options.map(o=>`<label style="margin-right:14px"><input type="radio" name="i_${f.id}" data-f="${f.id}" value="${esc(o)}" ${val===o?"checked":""}> ${o}</label>`).join("")}</div>`;
+}
+function intakeFormHTML(values){ return `<div class="card">${CONFIG.intake.map(f=>intakeFieldHTML(f,(values||{})[f.id])).join("")}</div>`; }
+function wireIntake(container,onSet){
+ container.querySelectorAll("[data-f]").forEach(el=>{
+  const h=()=>onSet(el.dataset.f, el.type==="number" ? (el.value===""?null:+el.value) : el.value);
+  el.addEventListener("change",h); if(el.type==="number") el.addEventListener("input",h);
+ });
+}
+/* ---------------- session ---------------- */
+function newSession(pid){
+ const row=bundle.alloc.williams.find(r=>r.participant===pid);
+ return {v:"sc3", participant:pid, order:row.order, startedAt:new Date().toISOString(),
+  stage:"intake", idx:0, sub:"elicit", intake:{},
+  stim:Object.fromEntries(row.order.map(s=>[s,{items:{},notes:"",durations:{},variantPref:null,variantWhy:""}])),
+  onec:{r1:null,r2:null,notes:""}, log:[]};
+}
+function save(){ if(S) localStorage.setItem("sc3_"+S.participant, JSON.stringify(S)); }
+function log(ev,detail){ if(!S) return; S.log.push({t:new Date().toISOString(),ev,detail}); save(); }
+function curSlot(){ return bundle.bySlot[S.order[S.idx]]; }
+function broadcast(){ send({type:"state", stage:S.stage, idx:S.idx, sub:S.sub, slot:S.stage==="loop"?S.order[S.idx]:null,
+  order:S.order, onec:S.stage==="onec"?S.onec:null, intake:S.stage==="intake"?S.intake:null, pid:S.participant}); }
+/* ---------------- timers ---------------- */
+function startTimer(seconds){
+ stopTimer(); phaseStart=Date.now(); const el=$("#timer"); el.style.display="inline-block";
+ tick=setInterval(()=>{ const gone=Math.floor((Date.now()-phaseStart)/1000), left=seconds-gone;
+  const a=Math.abs(left); el.textContent=(left<0?"+":"")+Math.floor(a/60)+":"+String(a%60).padStart(2,"0");
+  el.className="timer"+(left<0?" over":(left<=30?" amber":"")); },500);
+}
+function stopTimer(){ if(tick) clearInterval(tick); tick=null; $("#timer").style.display="none"; }
+function bankDuration(){ if(!phaseStart||S.stage!=="loop") return;
+ const sl=S.order[S.idx], d=Math.round((Date.now()-phaseStart)/1000);
+ S.stim[sl].durations[S.sub]=(S.stim[sl].durations[S.sub]||0)+d; phaseStart=null; save(); }
+/* ---------------- shared renderers (accordion item lists — definitions expand in place) ---------------- */
+function listEntry(id,d,keyed){
+ return `<div class="it${keyed?" keyed":""}" data-id="${id}"><div class="hd">${id} · ${d.name}</div>`+
+        `<div class="def"><div class="meta">${d.category} — ${d.family}</div>${d.definition}</div></div>`;
+}
+function fullListHTML(highlight){
+ const cats={}; Object.entries(bundle.defs).forEach(([id,d])=>{(cats[d.category]=cats[d.category]||[]).push([id,d]);});
+ let h='<div class="itemlist" id="ilist">';
+ for(const [cat,items] of Object.entries(cats)){
+  h+=`<div class="cat">${cat}</div>`;
+  for(const [id,d] of items) h+=listEntry(id,d,highlight&&highlight.has(id));
+ }
+ return h+"</div>";
+}
+function keyedListHTML(keys){ // reveal: ONLY the present items, grouped by category
+ const cats={};
+ keys.forEach(k=>{ const d=bundle.defs[k.item]; (cats[d.category]=cats[d.category]||[]).push([k.item,d]); });
+ let h='<div class="itemlist" id="ilist">';
+ for(const [cat,items] of Object.entries(cats)){
+  h+=`<div class="cat">${cat}</div>`;
+  for(const [id,d] of items) h+=listEntry(id,d,true);
+ }
+ return h+"</div>";
+}
+function wirePicks(onPick){ // accordion toggle; never rebuilds the list, never touches anything else
+ const list=$("#ilist"); if(!list) return;
+ list.querySelectorAll(".it .hd").forEach(hd=>hd.onclick=()=>{
+  const it=hd.parentElement, was=it.classList.contains("open");
+  list.querySelectorAll(".it.open").forEach(x=>x.classList.remove("open"));
+  if(!was){ it.classList.add("open"); onPick && onPick(it.dataset.id); }
+ });
+}
+/* ================= PARTICIPANT ================= */
+let pState=null, pR={r1:null,r2:null};
+function welcomeHTML(){
+ return `<div class="card welcome"><h2>${CONFIG.welcome_title}</h2>${CONFIG.welcome_body.map(p=>`<p>${p}</p>`).join("")}</div>`;
+}
+function ctxBanner(sl){ return `<div class="ctx"><b>About this data:</b> ${CONFIG.dataset_context[sl.dataset]||""}</div>`; }
+function pRender(st){
+ pState=st;
+ if(!st){ app.innerHTML=welcomeHTML(); return; }
+ $("#pidTag").textContent=st.pid||""; $("#stageTag").textContent=st.stage+(st.stage==="loop"?" · "+st.slot+" · "+st.sub:"");
+ if(st.stage==="intake"){
+  app.innerHTML=`<div class="instr">${CONFIG.intake_instr}</div>`+intakeFormHTML(st.intake);
+  wireIntake(app,(f,v)=>send({type:"intake",field:f,val:v}));
+  return;
+ }
+ if(st.stage==="welcome"){ app.innerHTML=welcomeHTML(); return; }
+ if(st.stage==="loop"){
+  const sl=bundle.bySlot[st.slot];
+  if(st.sub==="elicit"){
+   const media=sl.live?`<iframe class="stim" src="${sl.live}"></iframe>`:`<div class="stimwrap"><img class="zoom" data-tag="${st.slot}" src="${sl.chart}"></div>`;
+   app.innerHTML=`<div class="instr">${CONFIG.elicit_instr}</div>${ctxBanner(sl)}${inspectRow(sl,"elicit")}${media}`;
+   wireInspect(sl);
+   const f=app.querySelector("iframe"); if(f) f.addEventListener("load",()=>send({type:"plog",ev:"iframe_open",detail:st.slot}));
+   return;
+  }
+  if(st.sub==="reveal"){
+   app.innerHTML=`<div class="instr">${CONFIG.reveal_instr}</div>${inspectRow(sl,"reveal")}<div class="cols">
+     ${keyedListHTML(sl.keys)}
+     <div>${sl.live?`<iframe class="stim" style="height:70vh" src="${sl.live}"></iframe>`:`<div class="stimwrap"><img class="zoom" data-tag="${st.slot}" style="max-height:70vh" src="${sl.chart}"></div>`}</div></div>`;
+   wireInspect(sl);
+   wirePicks(id=>send({type:"plog",ev:"def_open",detail:st.slot+":"+id}));
+   return;
+  }
+  if(st.sub==="variant"){
+   const tag=v=>v?' <span class="ixtag">· interactive — click to open</span>':"";
+   app.innerHTML=`<div class="instr">${CONFIG.variant_instr}</div><div class="sibs">
+    <figure class="primary"><img class="zoom" data-tag="${st.slot}" ${sl.live?`data-live="${sl.live}"`:""} src="${sl.chart}"><figcaption>Original${tag(sl.live)}</figcaption></figure>
+    ${sl.siblings.map((v,i)=>`<figure><img class="zoom" data-tag="${st.slot}-V${i+1}" ${v.live?`data-live="${v.live}"`:""} src="${v.img}"><figcaption>Variant ${i+1}${tag(v.live)}</figcaption></figure>`).join("")}</div>`;
+   return;
+  }
+ }
+ if(st.stage==="onec"){
+  const order=st.order||bundle.man.slots.map(s=>s.slot);
+  app.innerHTML=`<div class="instr">${CONFIG.onec_instr}</div>
+   <div class="thumbs" id="thumbs">${order.map(s=>`<img src="${bundle.bySlot[s].chart}" data-slot="${s}" title="${s}">`).join("")}
+    <button class="sec" id="thumbClear" style="height:64px">clear</button></div>
+   <div class="cols">
+    ${fullListHTML(null)}
+    <div><div class="card" id="preview"><span class="small">Click a thumbnail to see that chart's identified concepts highlighted on the left.</span></div>
+     <div class="card"><div class="slider"><span>${CONFIG.onec_scale1}</span></div>
+      <div class="slider"><input id="r1" type="range" min="1" max="7" value="${pR.r1||4}"><span class="val" id="v1">${pR.r1||"–"}</span></div>
+      <div class="slider"><span>${CONFIG.onec_scale2}</span></div>
+      <div class="slider"><input id="r2" type="range" min="1" max="7" value="${pR.r2||4}"><span class="val" id="v2">${pR.r2||"–"}</span></div>
+      <p class="small">Drag each slider to your rating.</p></div></div></div>`;
+  wirePicks(id=>send({type:"plog",ev:"def_open",detail:"1C:"+id}));
+  const hi=slot=>{ // surgical highlight of one stimulus's keyed items on the full list
+   const keyed=slot?new Set(bundle.bySlot[slot].keys.map(k=>k.item)):new Set();
+   $("#ilist").querySelectorAll(".it").forEach(el=>el.classList.toggle("keyed",keyed.has(el.dataset.id)));
+   $("#thumbs").querySelectorAll("img").forEach(im=>im.classList.toggle("on",im.dataset.slot===slot));
+   if(!slot){ $("#preview").innerHTML=`<span class="small">Click a thumbnail to see that chart's identified concepts highlighted on the left.</span>`; }
+   else { const s2=bundle.bySlot[slot];
+    $("#preview").innerHTML = s2.live
+     ? `<iframe class="stim" style="height:52vh" src="${s2.live}"></iframe><div class="small" style="margin-top:4px">Live and interactive — <button class="sec" id="pvFull">open full screen</button></div>`
+     : `<img class="zoom" data-tag="${slot}" style="max-width:100%;border:1px solid var(--line);border-radius:6px" src="${s2.chart}"><div class="small" style="margin-top:4px">Click the image to enlarge.</div>`;
+    const pf=$("#pvFull"); if(pf) pf.onclick=()=>{openOverlay(`<iframe src="${s2.live}"></iframe>`,"live");send({type:"plog",ev:"live_open",detail:"1C:"+slot});};
+    send({type:"plog",ev:"onec_stimulus",detail:slot});
+   }
+  };
+  $("#thumbs").querySelectorAll("img").forEach(im=>im.onclick=()=>hi(im.dataset.slot));
+  $("#thumbClear").onclick=()=>hi(null);
+  ["r1","r2"].forEach((r,i)=>{$("#"+r).oninput=e=>{pR[r]=+e.target.value;$("#v"+(i+1)).textContent=e.target.value;send({type:"rating",which:r,val:+e.target.value});};});
+  return;
+ }
+ if(st.stage==="debrief"){
+  app.innerHTML=`<div class="card welcome"><h2>${CONFIG.debrief_title}</h2>${CONFIG.debrief_body.map(p=>`<p>${p}</p>`).join("")}<p><b>${CONFIG.debrief_close}</b></p></div>`;
+ }
+}
+/* ================= RESEARCHER ================= */
+function cueBox(stage){ return `<div class="cue"><b>Cue.</b> ${CONFIG.cues[stage]}</div>`; }
+function hSetup(){
+ $("#stageTag").textContent="setup";
+ const rows=bundle.alloc.williams.map(r=>`<tr><td>${r.participant}</td><td>${r.order.join(" ")}</td></tr>`).join("");
+ app.innerHTML=`${cueBox("setup")}<div class="card"><label>Participant:
+   <select id="pid">${bundle.alloc.williams.map(r=>`<option>${r.participant}</option>`).join("")}</select></label>
+   <button id="startBtn" style="margin-left:16px">Start session</button>
+   <span id="resume"></span></div>
+  <div class="card"><b>Rotation (Williams 8×8×3)</b><table class="order"><tr><th>ID</th><th>Order</th></tr>${rows}</table></div>`;
+ const pidSel=$("#pid");
+ const checkResume=()=>{ const ex=localStorage.getItem("sc3_"+pidSel.value);
+   $("#resume").innerHTML=ex?` <button class="warn" id="resumeBtn">Resume saved ${pidSel.value}</button>`:"";
+   const b=$("#resumeBtn"); if(b) b.onclick=()=>{S=JSON.parse(ex); S.intake=S.intake||{}; enter(S.stage,true);};};
+ pidSel.onchange=checkResume; checkResume();
+ $("#startBtn").onclick=()=>{ S=newSession(pidSel.value); log("session_start",{}); enter("intake"); };
+}
+function hIntake(){
+ S.intake=S.intake||{};
+ const icount=()=>{ const n=CONFIG.intake.filter(f=>S.intake[f.id]!=null&&S.intake[f.id]!=="").length;
+  const el=$("#icount"); if(el) el.textContent=`${n} of ${CONFIG.intake.length} answered`; };
+ app.innerHTML=`${cueBox("intake")}${intakeFormHTML(S.intake)}
+  <div class="card"><span class="small" id="icount"></span><p style="margin-top:8px"><button class="sec" id="backSetup2">\u2190 Back</button>
+   <button id="toWelcome" style="margin-left:6px">Continue \u2192</button></p></div>`;
+ wireIntake(app,(f,v)=>{S.intake[f]=v;save();icount();});
+ $("#toWelcome").onclick=()=>enter("welcome");
+ $("#backSetup2").onclick=()=>{stopTimer();hSetup();};
+ icount();
+}
+function applyIntake(field,val){ // participant typed: store + mirror into the console form
+ S.intake=S.intake||{}; S.intake[field]=val; save();
+ if(S.stage!=="intake") return;
+ document.querySelectorAll(`[data-f="${field}"]`).forEach(el=>{
+  if(el.type==="number") el.value=val??""; else el.checked=(el.value===String(val)); });
+ const n=CONFIG.intake.filter(f=>S.intake[f.id]!=null&&S.intake[f.id]!=="").length;
+ const c=$("#icount"); if(c) c.textContent=`${n} of ${CONFIG.intake.length} answered`;
+}
+function tickBtn(sl,item,fld,label,title){
+ const on=(S.stim[sl].items[item]||{})[fld];
+ return `<button class="tick${on?" on":""}" title="${title}" data-sl="${sl}" data-it="${item}" data-f="${fld}">${label}</button>`;
+}
+function seededDecoys(slot,n){ // stable per-slot decoy pick
+ let h=0; for(const c of slot) h=(h*31+c.charCodeAt(0))>>>0;
+ const pool=[...CONFIG.decoy_probes], out=[];
+ for(let i=0;i<n&&pool.length;i++){ h=(h*1103515245+12345)>>>0; out.push(pool.splice(h%pool.length,1)[0]); }
+ return out;
+}
+function probeDeckHTML(sl){ // elicit: keyed-item probes + decoys, shuffled stably
+ const cards=sl.keys.filter(k=>CONFIG.item_probes[k.item]).map(k=>({q:CONFIG.item_probes[k.item],tag:k.item}));
+ seededDecoys(sl.slot,CONFIG.decoys_per_stimulus).forEach(q=>cards.push({q,tag:"decoy"}));
+ let h=0; for(const c of sl.slot) h=(h*33+c.charCodeAt(0))>>>0;
+ cards.sort((a,b)=>((h*a.q.length)%97)-((h*b.q.length)%97));
+ return `<div class="card deck"><b>Stimulus probes</b> <span class="small">(if they stall)</span><br>`+
+  cards.map(c=>`<button class="probe" data-q="${esc(c.q)}">${c.q}<span class="tag">${c.tag}</span></button>`).join("")+`</div>`;
+}
+function revealProbesHTML(sl){
+ if(!CONFIG.reveal_probes.length) return "";
+ const org=CONFIG.dataset_orgs[sl.dataset]||"an organisation";
+ return `<div class="card deck"><b>Reportability probes</b> <span class="small">(after the walkthrough — ask one or two; they drive the R ticks)</span><br>`+
+  CONFIG.reveal_probes.map(q=>{const t=q.replace("{ORG}",org);return `<button class="probe" data-q="${esc(t)}">${t}</button>`;}).join("")+`</div>`;
+}
+function hLoop(){
+ const sl=curSlot(), sid=sl.slot, st=S.stim[sid];
+ const rows=sl.keys.map(k=>{
+  const arg=k.status.includes("arguable")?'<span class="arg">arguable</span>':"";
+  return `<div class="row"><span class="nm"><b>${k.item}</b> ${bundle.defs[k.item].name} ${arg}<div class="small">${k.evidence}</div></span>
+   ${tickBtn(sid,k.item,"u","U","spotted unprimed")}${tickBtn(sid,k.item,"e","E","endorsed at reveal")}${tickBtn(sid,k.item,"r","R","reportable here")}</div>`;}).join("");
+ const media = S.sub==="variant"
+  ? `<div class="sibs"><figure class="primary"><img class="zoom" ${sl.live?`data-live="${sl.live}"`:""} src="${sl.chart}"><figcaption>Original — ${sl.model}${sl.live?' <span class="ixtag">· live</span>':''}</figcaption></figure>
+     ${sl.siblings.map((v,i)=>`<figure><img class="zoom" ${v.live?`data-live="${v.live}"`:""} src="${v.img}"><figcaption>V${i+1} — ${v.model}${v.live?' <span class="ixtag">· live</span>':''}</figcaption></figure>`).join("")}</div>
+     <div class="card"><b>Preference:</b> ${["Original","V1","V2","V3","None"].map(o=>`<label style="margin-right:12px"><input type="radio" name="vp" value="${o}" ${st.variantPref===o?"checked":""}> ${o}</label>`).join("")}
+      <textarea id="vwhy" placeholder="why (their words)">${st.variantWhy||""}</textarea></div>`
+  : (sl.live?`<iframe class="stim" style="height:58vh" src="${sl.live}"></iframe>`:`<div class="stimwrap"><img class="zoom" style="max-height:58vh" src="${sl.chart}"></div>`);
+ const deck = S.sub==="elicit" ? probeDeckHTML(sl) : (S.sub==="reveal" ? revealProbesHTML(sl) : "");
+ app.innerHTML=`${cueBox(S.sub)}<div class="hgrid"><div>
+   <div class="small" style="margin-bottom:6px"><b>${sid}</b> · ${sl.title} · ${sl.model} · ${sl.dataset} · ${sl.regime}</div>
+   ${media}
+   ${deck}
+   <div class="nudges" style="margin-top:4px">${CONFIG.nudges.map(n=>`<button class="nud">${n}</button>`).join("")}</div></div>
+  <div><div class="card"><b>Key — tick as it happens</b><div class="ticks">${rows}</div></div>
+   <div class="card"><b>Notes (${sid})</b><textarea id="snotes">${st.notes||""}</textarea></div>
+   <div class="card"><button class="sec" id="prevSub">← Back</button>
+    <button id="nextSub" style="margin-left:6px">${S.sub==="elicit"?"Reveal →":S.sub==="reveal"?"Variants →":(S.idx<7?"Next stimulus →":"To 1C →")}</button>
+    <span class="small" style="margin-left:8px">stimulus ${S.idx+1} of 8 · phase: ${S.sub}</span></div></div></div>`;
+ app.querySelectorAll(".tick").forEach(b=>b.onclick=()=>{
+  const {sl:s2,it,f}=b.dataset, o=S.stim[s2].items[it]=S.stim[s2].items[it]||{};
+  o[f]=!o[f]; o[f+"_t"]=new Date().toISOString(); save(); log("tick",{slot:s2,item:it,field:f,on:o[f]}); b.classList.toggle("on");});
+ app.querySelectorAll(".nud").forEach(b=>b.onclick=()=>log("nudge",{slot:sid,text:b.textContent}));
+ app.querySelectorAll(".probe").forEach(b=>b.onclick=()=>log("probe",{slot:sid,phase:S.sub,text:b.dataset.q}));
+ $("#snotes").onchange=e=>{st.notes=e.target.value;save();};
+ app.querySelectorAll("input[name=vp]").forEach(r=>r.onchange=e=>{st.variantPref=e.target.value;save();log("variant_pref",{slot:sid,pref:e.target.value});});
+ const vw=$("#vwhy"); if(vw) vw.onchange=e=>{st.variantWhy=e.target.value;save();};
+ $("#nextSub").onclick=()=>{
+  bankDuration();
+  if(S.sub==="elicit"){S.sub="reveal";}
+  else if(S.sub==="reveal"){S.sub="variant";}
+  else { if(S.idx<7){S.idx++;S.sub="elicit";} else {enter("onec");return;} }
+  save(); enter("loop",true); };
+ $("#prevSub").onclick=()=>{
+  bankDuration();
+  if(S.sub==="variant"){S.sub="reveal";}
+  else if(S.sub==="reveal"){S.sub="elicit";}
+  else { if(S.idx>0){S.idx--;S.sub="variant";} else {enter("welcome");return;} }
+  save(); enter("loop",true); };
+}
+function hOnec(){
+ app.innerHTML=`${cueBox("onec")}<div class="card"><b>Global ratings (live from participant)</b>
+   <p>Coverage: <b id="hr1">${S.onec.r1??"–"}</b> / 7 &nbsp;&nbsp; Clarity/distinctness: <b id="hr2">${S.onec.r2??"–"}</b> / 7</p></div>
+  <div class="card"><b>WHAT discussion prompts</b><p class="pill">Anything missing?</p><p class="pill">Any two that are really one?</p><p class="pill">Anything that should go?</p><p class="pill">Does the grouping make sense?</p><p class="pill">If time: how should a tool report these?</p>
+   <textarea id="onotes" placeholder="discussion notes">${S.onec.notes||""}</textarea></div>
+  <div class="card"><button class="sec" id="backLoop">← Back to the charts</button>
+   <button id="toDebrief" style="margin-left:6px">To debrief →</button></div>`;
+ $("#onotes").onchange=e=>{S.onec.notes=e.target.value;save();};
+ $("#toDebrief").onclick=()=>enter("debrief");
+ $("#backLoop").onclick=()=>{S.idx=7;S.sub="variant";S.stage="loop";save();enter("loop",true);};
+}
+function hDebrief(){
+ app.innerHTML=`${cueBox("debrief")}
+  <div class="card welcome" style="border-left:4px solid var(--acc)"><div class="small" style="margin-bottom:4px"><b>Participant screen shows:</b></div>
+   <h2>${CONFIG.debrief_title}</h2>${CONFIG.debrief_body.map(p=>`<p>${p}</p>`).join("")}<p><b>${CONFIG.debrief_close}</b></p></div>
+  <div class="card"><b>Final notes</b><textarea id="fnotes"></textarea>
+   <p><button class="sec" id="back1C">← Back to 1C</button>
+    <button id="finish" style="margin-left:6px">Finish & export</button></p></div>`;
+ $("#fnotes").onchange=e=>log("final_notes",e.target.value);
+ $("#back1C").onclick=()=>enter("onec");
+ $("#finish").onclick=()=>{log("session_end",{}); exportJSON();};
+}
+function exportJSON(){
+ if(!S) return; S.exportedAt=new Date().toISOString();
+ const b=new Blob([JSON.stringify(S,null,1)],{type:"application/json"});
+ const a=document.createElement("a"); a.href=URL.createObjectURL(b);
+ a.download=`sc3_${S.participant}_${S.exportedAt.replace(/[:.]/g,"-")}.json`; a.click();
+}
+/* ---------------- stage machine (host drives) ---------------- */
+function enter(stage,keepSub){
+ S.stage=stage; if(stage==="loop"&&!keepSub){S.sub="elicit";}
+ save(); broadcast();
+ $("#pidTag").textContent=S.participant; $("#stageTag").textContent=stage+(stage==="loop"?" · "+S.order[S.idx]+" · "+S.sub:"");
+ stopTimer();
+ if(stage==="intake"){ hIntake(); }
+ else if(stage==="welcome"){ app.innerHTML=`${cueBox("welcome")}<div class="card welcome">${CONFIG.welcome_body.map(p=>`<p>${p}</p>`).join("")}</div>
+   <div class="card"><button class="sec" id="backSetup">← Back</button> <button id="go" style="margin-left:6px">Begin stimuli →</button></div>`;
+  $("#go").onclick=()=>{S.idx=0;S.sub="elicit";enter("loop",true);};
+  $("#backSetup").onclick=()=>enter("intake"); }
+ else if(stage==="loop"){ hLoop(); startTimer(CONFIG.phase_seconds[S.sub]||120); }
+ else if(stage==="onec"){ hOnec(); }
+ else if(stage==="debrief"){ hDebrief(); }
+}
+/* ---------------- boot ---------------- */
+loadBundle().then(()=>{
+ if(HOST){
+  $("#exportBtn").style.display="inline-block"; $("#exportBtn").onclick=exportJSON;
+  onMsg(m=>{ if(!S) return;
+   if(m.type==="rating"){ S.onec[m.which]=m.val; save(); const el=$("#h"+m.which); if(el) el.textContent=m.val; }
+   if(m.type==="intake"){ applyIntake(m.field,m.val); }
+   if(m.type==="plog"){ log("participant",m); }});
+  hSetup();
+ } else {
+  onMsg(m=>{ if(m.type!=="state") return;
+   const changed=!pState||pState.stage!==m.stage||pState.sub!==m.sub||pState.slot!==m.slot;
+   if(changed) pRender(m); else pState=m; });
+  pRender(null);
+ }
+});
+</script>
+</body>
+</html>

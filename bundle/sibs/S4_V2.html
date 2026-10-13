@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The London Housing Burden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: #1e3c72;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .toggle-group {
+            display: flex;
+            gap: 10px;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .toggle-btn {
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active {
+            background: #1e3c72;
+            color: white;
+        }
+        .toggle-btn:hover:not(.active) {
+            background: #e0e0e0;
+        }
+        select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+        }
+        .chart-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 14px;
+            line-height: 1.6;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        .insight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .insight h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .insight p {
+            color: #856404;
+            line-height: 1.6;
+        }
+        .legend {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        .stat-highlight {
+            font-weight: bold;
+            color: #d32f2f;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>London's Housing Crisis in Numbers</h1>
+        <p class="subtitle">How the capital's households spend <span class="stat-highlight">£182/week</span> on housing — more than twice the North East</p>
+        
+        <div class="insight">
+            <h3>💷 The Burden Nobody Talks About</h3>
+            <p>London households spend <strong>£182.20 per week</strong> on housing, fuel and power — that's <strong>26% of their total weekly budget</strong>. Meanwhile, households in the North East spend just £82.10. This isn't just a cost-of-living crisis; it's a <em>geography-of-opportunity</em> crisis.</p>
+        </div>
+
+        <div class="controls">
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-view="absolute">£ per week</button>
+                <button class="toggle-btn" data-view="percentage">% of budget</button>
+            </div>
+            <select id="categorySelect">
+                <option value="4 Housing(net)¹, fuel & power">Housing, fuel & power</option>
+                <option value="7 Transport">Transport</option>
+                <option value="9 Recreation & culture">Recreation & culture</option>
+                <option value="11 Restaurants & hotels">Restaurants & hotels</option>
+                <option value="1 Food & non-alcoholic drinks">Food & non-alcoholic drinks</option>
+                <option value="10 Education">Education</option>
+                <option value="6 Health">Health</option>
+                <option value="3 Clothing & footwear">Clothing & footwear</option>
+                <option value="12 Miscellaneous goods & services">Miscellaneous goods & services</option>
+                <option value="5 Household goods & services">Household goods & services</option>
+            </select>
+        </div>
+
+        <div class="chart-container">
+            <svg id="chart" width="100%" height="600"></svg>
+        </div>
+
+        <div class="tooltip" id="tooltip"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #d32f2f;"></div>
+                <span>London (highest housing costs)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #1976d2;"></div>
+                <span>Other regions</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #388e3c;"></div>
+                <span>North East (lowest housing costs)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = [{"Category": "1 Food & non-alcoholic drinks", "United Kingdom": 69.2, "England": 69.5, "North East": 60.5, "North West": 66.4, "Yorkshire and The Humber": 66.0, "East Midlands": 69.3, "West Midlands": 66.4, "East": 74.2, "London": 68.7, "South East": 74.4, "South West": 73.0, "Wales": 66.1, "Scotland": 64.8, "Northern Ireland": 80.9}, {"Category": "2 Alcoholic drinks, tobacco & narcotics", "United Kingdom": 11.1, "England": 10.8, "North East": 9.2, "North West": 10.5, "Yorkshire and The Humber": 11.1, "East Midlands": 11.1, "West Midlands": 10.6, "East": 11.8, "London": 8.4, "South East": 12.0, "South West": 12.6, "Wales": 13.5, "Scotland": 10.7, "Northern Ireland": 14.3}, {"Category": "3 Clothing & footwear", "United Kingdom": 17.4, "England": 17.6, "North East": 17.5, "North West": 17.3, "Yorkshire and The Humber": 16.3, "East Midlands": 17.0, "West Midlands": 15.5, "East": 20.5, "London": 20.1, "South East": 15.4, "South West": 18.7, "Wales": 16.1, "Scotland": 13.7, "Northern Ireland": 25.5}, {"Category": "4 Housing(net)¹, fuel & power", "United Kingdom": 112.5, "England": 117.1, "North East": 82.1, "North West": 95.0, "Yorkshire and The Humber": 97.4, "East Midlands": 103.0, "West Midlands": 98.5, "East": 112.5, "London": 182.2, "South East": 122.4, "South West": 111.9, "Wales": 94.3, "Scotland": 90.0, "Northern Ireland": 76.7}, {"Category": "5 Household goods & services", "United Kingdom": 38.3, "England": 39.4, "North East": 35.1, "North West": 38.7, "Yorkshire and The Humber": 40.5, "East Midlands": 34.9, "West Midlands": 31.5, "East": 46.2, "London": 37.8, "South East": 40.0, "South West": 46.4, "Wales": 34.3, "Scotland": 30.0, "Northern Ireland": 38.7}, {"Category": "6 Health", "United Kingdom": 9.4, "England": 9.7, "North East": 5.3, "North West": 7.5, "Yorkshire and The Humber": 8.6, "East Midlands": 7.7, "West Midlands": 9.3, "East": 10.5, "London": 10.6, "South East": 12.7, "South West": 11.3, "Wales": 9.3, "Scotland": 6.4, "Northern Ireland": 10.4}, {"Category": "7 Transport", "United Kingdom": 88.0, "England": 88.9, "North East": 69.0, "North West": 72.8, "Yorkshire and The Humber": 82.8, "East Midlands": 88.5, "West Midlands": 89.1, "East": 107.3, "London": 71.4, "South East": 110.3, "South West": 98.3, "Wales": 84.7, "Scotland": 78.7, "Northern Ireland": 94.0}, {"Category": "8 Communication", "United Kingdom": 21.6, "England": 21.8, "North East": 20.0, "North West": 21.5, "Yorkshire and The Humber": 21.0, "East Midlands": 21.1, "West Midlands": 21.4, "East": 23.6, "London": 21.2, "South East": 22.8, "South West": 22.0, "Wales": 20.7, "Scotland": 21.1, "Northern Ireland": 21.3}, {"Category": "9 Recreation & culture", "United Kingdom": 73.4, "England": 73.9, "North East": 64.0, "North West": 68.8, "Yorkshire and The Humber": 71.0, "East Midlands": 64.9, "West Midlands": 74.2, "East": 84.4, "London": 55.6, "South East": 93.3, "South West": 80.1, "Wales": 78.9, "Scotland": 70.2, "Northern Ireland": 60.6}, {"Category": "10 Education", "United Kingdom": 6.3, "England": 7.1, "North East": 3.9, "North West": 3.5, "Yorkshire and The Humber": 3.8, "East Midlands": 3.0, "West Midlands": 4.7, "East": 7.2, "London": 12.9, "South East": 11.0, "South West": 7.1, "Wales": 2.2, "Scotland": 2.5, "Northern Ireland": 3.1}, {"Category": "11 Restaurants & hotels", "United Kingdom": 44.7, "England": 46.1, "North East": 35.9, "North West": 39.9, "Yorkshire and The Humber": 44.2, "East Midlands": 36.8, "West Midlands": 38.3, "East": 48.0, "London": 54.0, "South East": 52.2, "South West": 52.7, "Wales": 42.1, "Scotland": 33.3, "Northern Ireland": 44.4}, {"Category": "12 Miscellaneous goods & services", "United Kingdom": 45.2, "England": 46.6, "North East": 36.6, "North West": 42.0, "Yorkshire and The Humber": 43.2, "East Midlands": 41.0, "West Midlands": 42.4, "East": 54.4, "London": 47.6, "South East": 51.9, "South West": 51.2, "Wales": 39.3, "Scotland": 35.3, "Northern Ireland": 47.8}, {"Category": "1-12 All expenditure groups", "United Kingdom": 537.2, "England": 548.4, "North East": 439.2, "North West": 484.1, "Yorkshire and The Humber": 505.9, "East Midlands": 498.3, "West Midlands": 501.9, "East": 600.7, "London": 590.6, "South East": 618.3, "South West": 585.3, "Wales": 501.4, "Scotland": 456.8, "Northern Ireland": 517.7}, {"Category": "13 Other expenditure items", "United Kingdom": 85.4, "England": 88.3, "North East": 66.3, "North West": 70.6, "Yorkshire and The Humber": 74.2, "East Midlands": 74.6, "West Midlands": 79.6, "East": 97.7, "London": 105.3, "South East": 106.0, "South West": 92.6, "Wales": 72.6, "Scotland": 71.1, "Northern Ireland": 66.1}, {"Category": "Total expenditure", "United Kingdom": 622.6, "England": 636.7, "North East": 505.5, "North West": 554.7, "Yorkshire and The Humber": 580.1, "East Midlands": 572.9, "West Midlands": 581.5, "East": 698.4, "London": 695.9, "South East": 724.2, "South West": 677.9, "Wales": 574.0, "Scotland": 528.0, "Northern Ireland": 583.8}, {"Category": "Total expenditure per person", "United Kingdom": 268.1, "England": 271.6, "North East": 228.9, "North West": 243.0, "Yorkshire and The Humber": 252.7, "East Midlands": 240.3, "West Midlands": 241.7, "East": 297.5, "London": 288.2, "South East": 305.3, "South West": 295.7, "Wales": 254.6, "Scotland": 250.8, "Northern Ireland": 239.0}];
+
+        const regions = ["North East", "North West", "Yorkshire and The Humber", "East Midlands", "West Midlands", "East", "London", "South East", "South West", "Wales", "Scotland", "Northern Ireland"];
+        
+        let currentView = 'absolute';
+        let currentCategory = '4 Housing(net)¹, fuel & power';
+
+        const totalExpenditure = data.find(d => d.Category === 'Total expenditure');
+
+        function getColor(region, category) {
+            if (region === 'London' && category === '4 Housing(net)¹, fuel & power') {
+                return '#d32f2f';
+            }
+            if (region === 'North East' && category === '4 Housing(net)¹, fuel & power') {
+                return '#388e3c';
+            }
+            if (region === 'London') {
+                return '#e57373';
+            }
+            if (region === 'North East') {
+                return '#66bb6a';
+            }
+            return '#1976d2';
+        }
+
+        function drawChart() {
+            const svg = document.getElementById('chart');
+            const container = svg.parentElement;
+            const width = container.clientWidth;
+            const height = 600;
+            const margin = { top: 60, right: 40, bottom: 120, left: 80 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+            svg.innerHTML = '';
+
+            const categoryData = data.find(d => d.Category === currentCategory);
+            if (!categoryData) return;
+
+            const values = regions.map(region => {
+                const value = categoryData[region];
+                if (currentView === 'percentage') {
+                    const total = totalExpenditure[region];
+                    return { region, value: (value / total) * 100 };
+                }
+                return { region, value };
+            });
+
+            values.sort((a, b) => b.value - a.value);
+
+            const maxValue = Math.max(...values.map(d => d.value));
+            const barWidth = chartWidth / values.length;
+            const padding = barWidth * 0.2;
+
+            // Title
+            const titleG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            title.setAttribute('x', margin.left);
+            title.setAttribute('y', 30);
+            title.setAttribute('font-size', '20');
+            title.setAttribute('font-weight', 'bold');
+            title.setAttribute('fill', '#333');
+            title.textContent = currentCategory.replace(/^\d+\s+/, '');
+            titleG.appendChild(title);
+            svg.appendChild(titleG);
+
+            const chartG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            chartG.setAttribute('transform', `translate(${margin.left},${margin.top})`);
+
+            // Y-axis
+            const yAxisSteps = 5;
+            for (let i = 0; i <= yAxisSteps; i++) {
+                const y = chartHeight - (i * chartHeight / yAxisSteps);
+                const value = (i * maxValue / yAxisSteps);
+                
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', 0);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', chartWidth);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', '#e0e0e0');
+                line.setAttribute('stroke-width', '1');
+                chartG.appendChild(line);
+
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', -10);
+                label.setAttribute('y', y + 5);
+                label.setAttribute('text-anchor', 'end');
+                label.setAttribute('font-size', '12');
+                label.setAttribute('fill', '#666');
+                label.textContent = currentView === 'percentage' ? 
+                    `${value.toFixed(1)}%` : 
+                    `£${value.toFixed(0)}`;
+                chartG.appendChild(label);
+            }
+
+            // Bars
+            values.forEach((d, i) => {
+                const barHeight = (d.value / maxValue) * chartHeight;
+                const x = i * barWidth + padding / 2;
+                const y = chartHeight - barHeight;
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', barWidth - padding);
+                rect.setAttribute('height', barHeight);
+                rect.setAttribute('fill', getColor(d.region, currentCategory));
+                rect.setAttribute('rx', '4');
+                rect.style.cursor = 'pointer';
+                rect.style.transition = 'opacity 0.2s';
+
+                rect.addEventListener('mouseenter', (e) => {
+                    rect.style.opacity = '0.8';
+                    showTooltip(e, d);
+                });
+                rect.addEventListener('mouseleave', () => {
+                    rect.style.opacity = '1';
+                    hideTooltip();
+                });
+
+                chartG.appendChild(rect);
+
+                // Value label on top of bar
+                const valueLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                valueLabel.setAttribute('x', x + (barWidth - padding) / 2);
+                valueLabel.setAttribute('y', y - 5);
+                valueLabel.setAttribute('text-anchor', 'middle');
+                valueLabel.setAttribute('font-size', '11');
+                valueLabel.setAttribute('font-weight', 'bold');
+                valueLabel.setAttribute('fill', '#333');
+                valueLabel.textContent = currentView === 'percentage' ? 
+                    `${d.value.toFixed(1)}%` : 
+                    `£${d.value.toFixed(0)}`;
+                chartG.appendChild(valueLabel);
+
+                // X-axis labels
+                const labelText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                labelText.setAttribute('x', x + (barWidth - padding) / 2);
+                labelText.setAttribute('y', chartHeight + 15);
+                labelText.setAttribute('text-anchor', 'end');
+                labelText.setAttribute('font-size', '11');
+                labelText.setAttribute('fill', '#333');
+                labelText.setAttribute('transform', `rotate(-45, ${x + (barWidth - padding) / 2}, ${chartHeight + 15})`);
+                labelText.textContent = d.region;
+                chartG.appendChild(labelText);
+            });
+
+            svg.appendChild(chartG);
+        }
+
+        function showTooltip(event, d) {
+            const tooltip = document.getElementById('tooltip');
+            const total = totalExpenditure[d.region];
+            const percentage = (categoryData[d.region] / total * 100).toFixed(1);
+            const absoluteValue = categoryData[d.region].toFixed(2);
+            
+            tooltip.innerHTML = `
+                <strong>${d.region}</strong><br>
+                ${currentCategory.replace(/^\d+\s+/, '')}<br>
+                £${absoluteValue} per week<br>
+                ${percentage}% of total budget<br>
+                <em>Total weekly spend: £${total.toFixed(0)}</em>
+            `;
+            
+            tooltip.style.left = event.pageX + 15 + 'px';
+            tooltip.style.top = event.pageY + 15 + 'px';
+            tooltip.style.opacity = '1';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').style.opacity = '0';
+        }
+
+        // Get current category data for tooltip
+        let categoryData = data.find(d => d.Category === currentCategory);
+
+        // Event listeners
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentView = e.target.dataset.view;
+                drawChart();
+            });
+        });
+
+        document.getElementById('categorySelect').addEventListener('change', (e) => {
+            currentCategory = e.target.value;
+            categoryData = data.find(d => d.Category === currentCategory);
+            drawChart();
+        });
+
+        window.addEventListener('resize', drawChart);
+
+        // Initial draw
+        drawChart();
+    </script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+{
+ "T01": {
+  "name": "Source-citation omission",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Leaving out data-source or other provenance information the audience would need in order to assess the data; treated as an omission because professional producers are assumed to know provenance matters."
+ },
+ "T02": {
+  "name": "Ambiguous variable definition",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Presenting variables whose definitions or membership criteria are left unclear, so users cannot know exactly what is measured and may default to whichever reading their own viewing codes support."
+ },
+ "T03": {
+  "name": "Knowledge assumption",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Communicating in a way that only makes sense if users supply unstated propositions or intermediate reasoning steps themselves."
+ },
+ "T04": {
+  "name": "Thresholding",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Excluding values above or below chosen cut points. Visual instance: setting the axis range around the values most important to the intended comparison so that relevant higher/lower values are not shown."
+ },
+ "T05": {
+  "name": "Exceptional-case omission",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Excluding outliers or complicating cases from the representation in order to simplify the phenomenon."
+ },
+ "T06": {
+  "name": "User-transferred filtering",
+  "category": "Information access",
+  "family": "Omission",
+  "definition": "Shifting the information-loss choice onto the end-user via filtering capabilities (e.g. search bars), so the user selects the subset that is shown."
+ },
+ "T07": {
+  "name": "Variable selection",
+  "category": "Information access",
+  "family": "Metonymy",
+  "definition": "Choosing which variables from a larger data set to visualize; the chosen subset stands in for the whole."
+ },
+ "T08": {
+  "name": "Averaging",
+  "category": "Information access",
+  "family": "Metonymy",
+  "definition": "Substituting a simpler central representation for a wider range of values."
+ },
+ "T09": {
+  "name": "Summaries",
+  "category": "Information access",
+  "family": "Metonymy",
+  "definition": "Substituting summary text or summary graphics for the fuller underlying data."
+ },
+ "T10": {
+  "name": "Aggregation / binning",
+  "category": "Information access",
+  "family": "Metonymy",
+  "definition": "Grouping values into categories, bins or aggregates so that an intended effect becomes more apparent; may be applied inconsistently across series."
+ },
+ "T11": {
+  "name": "Source citation",
+  "category": "Provenance",
+  "family": "Data provenance",
+  "definition": "Naming or hyperlinking the origin of the data."
+ },
+ "T12": {
+  "name": "Additional references",
+  "category": "Provenance",
+  "family": "Data provenance",
+  "definition": "Supplying further reading or supporting references beyond the primary data source."
+ },
+ "T13": {
+  "name": "Methodology citation",
+  "category": "Provenance",
+  "family": "Data provenance",
+  "definition": "Explaining the methodological choices behind the data collection or the graphic."
+ },
+ "T14": {
+  "name": "Relevant facts",
+  "category": "Provenance",
+  "family": "Data provenance",
+  "definition": "Supplying contextual facts that situate or qualify the data."
+ },
+ "T15": {
+  "name": "Exception annotation",
+  "category": "Provenance",
+  "family": "Data provenance",
+  "definition": "Explicitly flagging known exceptions, errata or corrections to the data or graphic."
+ },
+ "T16": {
+  "name": "Visual uncertainty",
+  "category": "Provenance",
+  "family": "Representing uncertainty",
+  "definition": "Encoding uncertainty visually, e.g. error bars or confidence envelopes."
+ },
+ "T17": {
+  "name": "Inferential limits",
+  "category": "Provenance",
+  "family": "Representing uncertainty",
+  "definition": "Textual statements of confidence intervals, margins of error or other inferential limits."
+ },
+ "T18": {
+  "name": "Forecast annotation",
+  "category": "Provenance",
+  "family": "Representing uncertainty",
+  "definition": "Explicitly labelling the point at which data become extrapolated, predicted or forecast."
+ },
+ "T19": {
+  "name": "Expression of doubt",
+  "category": "Provenance",
+  "family": "Representing uncertainty",
+  "definition": "Hedging statements about the strength of potential conclusions."
+ },
+ "T20": {
+  "name": "Author bio",
+  "category": "Provenance",
+  "family": "Identification",
+  "definition": "Providing biographical information about the designer beyond a simple credit line."
+ },
+ "T21": {
+  "name": "Personal anecdote",
+  "category": "Provenance",
+  "family": "Identification",
+  "definition": "The designer disclosing personal stories or perspective within the presentation."
+ },
+ "T22": {
+  "name": "Perceptual noise",
+  "category": "Mapping",
+  "family": "Obscuring",
+  "definition": "Introducing noise at a perceptual level, e.g. a decorative 3D effect that degrades value judgement."
+ },
+ "T23": {
+  "name": "Sizing distortion",
+  "category": "Mapping",
+  "family": "Obscuring",
+  "definition": "Sizing that violates discriminability limits: elements too small for judgement, oversizing that overwhelms the presentation, or obscuring a value true position on an axis."
+ },
+ "T24": {
+  "name": "Poor channel mapping",
+  "category": "Mapping",
+  "family": "Obscuring",
+  "definition": "Failing (often unintentionally) to map important information to the most accurately judged visual channels, per graphical-perception rankings."
+ },
+ "T25": {
+  "name": "False cause-effect",
+  "category": "Mapping",
+  "family": "Obscuring",
+  "definition": "Design choices that imply causal relationships the data do not support."
+ },
+ "T26": {
+  "name": "Double axis",
+  "category": "Mapping",
+  "family": "Obscuring",
+  "definition": "Using constructions that experts note are difficult to decode even when properly used, e.g. dual axes."
+ },
+ "T27": {
+  "name": "Spatial metaphor",
+  "category": "Mapping",
+  "family": "Visual metaphor & metonymy",
+  "definition": "Layout exploiting embodied conventions such as left = past / right = future, or up = more/better, down = less/bad; interpreted automatically."
+ },
+ "T28": {
+  "name": "Typographic mapping",
+  "category": "Mapping",
+  "family": "Visual metaphor & metonymy",
+  "definition": "Pairing visualized patterns to categories via type treatment."
+ },
+ "T29": {
+  "name": "Color mapping",
+  "category": "Mapping",
+  "family": "Visual metaphor & metonymy",
+  "definition": "Colors carrying categorical or cultural meaning, e.g. party colors applied to election statistics."
+ },
+ "T30": {
+  "name": "Visual noise",
+  "category": "Mapping",
+  "family": "Visual metaphor & metonymy",
+  "definition": "Deliberately confusing visuals standing in for the confusion of the subject matter; can simultaneously obscure."
+ },
+ "T31": {
+  "name": "Visual contrast",
+  "category": "Mapping",
+  "family": "Contrast",
+  "definition": "Juxtaposing oppositional pieces of information visually so comparison itself carries the message."
+ },
+ "T32": {
+  "name": "Variable splice",
+  "category": "Mapping",
+  "family": "Contrast",
+  "definition": "Including variables not obviously associated with the target variables, implying that comparing them will yield further insight."
+ },
+ "T33": {
+  "name": "Visual grouping",
+  "category": "Mapping",
+  "family": "Classification",
+  "definition": "Visually grouping marks to assert category or priority structure."
+ },
+ "T34": {
+  "name": "Typographic classification",
+  "category": "Mapping",
+  "family": "Classification",
+  "definition": "Consistent font sizes/styles used to classify information within the visualization."
+ },
+ "T35": {
+  "name": "Significance equation",
+  "category": "Mapping",
+  "family": "Classification",
+  "definition": "Legend-like devices that highlight certain values as significant, imposing clusters of priority or importance."
+ },
+ "T36": {
+  "name": "Redundancy",
+  "category": "Mapping",
+  "family": "Redundancy",
+  "definition": "Repeating identical labels, or disaggregating values with little variance, to emphasize (or to create visual noise); violates the one-to-one data-visual mapping expected in strict InfoVis taxonomies."
+ },
+ "T37": {
+  "name": "Typographic emphasis",
+  "category": "Linguistic-based",
+  "family": "Typographic emphases",
+  "definition": "Font emphasis whose meaning derives from long-standing typographic convention."
+ },
+ "T38": {
+  "name": "Rhetorical question",
+  "category": "Linguistic-based",
+  "family": "Irony",
+  "definition": "A question posed to engage the user by direct address while implying its own (often obvious) answer; frequently in titles."
+ },
+ "T39": {
+  "name": "Scare quotes",
+  "category": "Linguistic-based",
+  "family": "Irony",
+  "definition": "Quotation marks that distance or ironize a term, cueing an implied alternative meaning."
+ },
+ "T40": {
+  "name": "Understatement",
+  "category": "Linguistic-based",
+  "family": "Irony",
+  "definition": "Understating a point so that the discrepancy itself communicates."
+ },
+ "T41": {
+  "name": "Analogy",
+  "category": "Linguistic-based",
+  "family": "Similarity",
+  "definition": "Comparing two entities to give insight into the lesser-known of the two."
+ },
+ "T42": {
+  "name": "Metaphor",
+  "category": "Linguistic-based",
+  "family": "Similarity",
+  "definition": "Equating two ideas by labelling or directly asserting that one is the other."
+ },
+ "T43": {
+  "name": "Parallelism",
+  "category": "Linguistic-based",
+  "family": "Similarity",
+  "definition": "Expressing two linguistic statements or visual features so they read as equal in importance."
+ },
+ "T44": {
+  "name": "Simile",
+  "category": "Linguistic-based",
+  "family": "Similarity",
+  "definition": "Explicit like/as comparison used for effect and emphasis of a similarity relationship."
+ },
+ "T45": {
+  "name": "Double entendre",
+  "category": "Linguistic-based",
+  "family": "Similarity",
+  "definition": "A single expression or visual form carrying two meanings via linguistic or visual similarity alone."
+ },
+ "T46": {
+  "name": "Apostrophe",
+  "category": "Linguistic-based",
+  "family": "Individualization",
+  "definition": "Directly addressing the end-user in titles and annotations, including via rhetorical questions and suggested goals."
+ },
+ "T47": {
+  "name": "Exploratory functions",
+  "category": "Linguistic-based",
+  "family": "Individualization",
+  "definition": "Offering sorting/filtering and similar functions as a personal appeal to the individual user."
+ },
+ "T48": {
+  "name": "Citizen framing",
+  "category": "Linguistic-based",
+  "family": "Individualization",
+  "definition": "Phrasing or imagery framed from an ordinary individual viewpoint (people icons, buy-insurance wording), cueing a viewing code that privileges the individual."
+ },
+ "T49": {
+  "name": "Default view",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "The initial visual configuration anchors interpretation to whatever it shows first."
+ },
+ "T50": {
+  "name": "Fixed comparison",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "Pre-loading reference values by default so users contrast other values against them; risky because users lack shared norms for judging visual significance."
+ },
+ "T51": {
+  "name": "Spatial ordering",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "Ordering content to exploit reading and scanning conventions so some information is prioritized."
+ },
+ "T52": {
+  "name": "Animation",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "Using time to suggest a story; pausing or ending on particular views prioritizes them through a climactic effect."
+ },
+ "T53": {
+  "name": "Search suggestion",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "Suggested queries prompting the user to examine particular parts of the data rather than explore freely."
+ },
+ "T54": {
+  "name": "Goal suggestion",
+  "category": "Procedural",
+  "family": "Anchoring",
+  "definition": "Prompts or instructions to look for particular patterns."
+ },
+ "T55": {
+  "name": "Search bar",
+  "category": "Procedural",
+  "family": "Filtering",
+  "definition": "Letting users constrain the depiction to personally relevant subsets; effective because personalization increases the message salience."
+ },
+ "T56": {
+  "name": "Menuing",
+  "category": "Procedural",
+  "family": "Filtering",
+  "definition": "Menu options (and their ordering) steering users toward comparisons and views the designers found most interesting while exploring the data."
+ }
+}

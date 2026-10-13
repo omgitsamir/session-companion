@@ -1,0 +1,801 @@
+{
+ "config": "A \u2014 S2 sonnet interactive; T19 abstract-only (Round 2)",
+ "slots": [
+  {
+   "slot": "S1",
+   "cell": "V2_DB_s1",
+   "model": "kimi-k2.7-code",
+   "dataset": "DB",
+   "interactive": false,
+   "regime": "free",
+   "title": "The Great British Van Boom",
+   "chart": "bundle/charts/S1.png",
+   "live": null,
+   "keys": [
+    {
+     "item": "T23",
+     "evidence": "y-axis floor 80",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T08",
+     "evidence": "averaging/rolling",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T10",
+     "evidence": "grouping/binning",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T15",
+     "evidence": "extreme-case annotation",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T16",
+     "evidence": "uncertainty band",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "typographic emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T33",
+     "evidence": "shaded grouping",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T51",
+     "evidence": "explicit ordering",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "source line present",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "'Change since Q4 1994' summary box",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T13",
+     "evidence": "footnote explains the rolling four-quarter method",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T18",
+     "evidence": "'Recent quarters provisional'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T42",
+     "evidence": "title metaphor: 'left \u2026 in the dust'",
+     "source": "visual",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S1_V1.png",
+     "model": "gemini-3.8-flash",
+     "cell": "V2_DB_s3"
+    },
+    {
+     "img": "bundle/sibs/S1_V2.png",
+     "model": "claude-sonnet-4.5",
+     "cell": "V2_DB_s0"
+    },
+    {
+     "img": "bundle/sibs/S1_V3.png",
+     "model": "gpt-5.6-luna",
+     "cell": "V2_DB_s3"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S2",
+   "cell": "V2IX_DA_s0",
+   "model": "claude-sonnet-4.5",
+   "dataset": "DA",
+   "interactive": true,
+   "regime": "free",
+   "title": "The Postcode Lottery of Life: England's Health Inequality Crisis",
+   "chart": "bundle/charts/S2.png",
+   "live": "bundle/stimuli/S2.html",
+   "keys": [
+    {
+     "item": "T56",
+     "evidence": "dropdown menu",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T55",
+     "evidence": "search box",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T49",
+     "evidence": "explicit default state",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T47",
+     "evidence": "event-driven interaction",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "css emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T04",
+     "evidence": "dashed reference line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "constructed summary score",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T01",
+     "evidence": "no source citation",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T46",
+     "evidence": "direct address: 'your life expectancy\u2026your postcode'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T48",
+     "evidence": "'real communities, real families' \u2014 resident framing (candidate)",
+     "source": "visual",
+     "status": "accepted-arguable"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S2_V1.png",
+     "model": "gpt-5.6-luna",
+     "cell": "V2IX_DA_s0",
+     "live": "bundle/sibs/S2_V1.html"
+    },
+    {
+     "img": "bundle/sibs/S2_V2.png",
+     "model": "gemini-3.8-flash",
+     "cell": "V2IX_DA_s0",
+     "live": "bundle/sibs/S2_V2.html"
+    },
+    {
+     "img": "bundle/sibs/S2_V3.png",
+     "model": "kimi-k2.7-code",
+     "cell": "V2IX_DA_s0",
+     "live": "bundle/sibs/S2_V3.html"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S3",
+   "cell": "V2_DA_s3",
+   "model": "glm-5.3-flash",
+   "dataset": "DA",
+   "interactive": false,
+   "regime": "free",
+   "title": "Born in Blackpool or Born in Wokingham?",
+   "chart": "bundle/charts/S3.png",
+   "live": null,
+   "keys": [
+    {
+     "item": "T35",
+     "evidence": "fitted trend line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T05",
+     "evidence": "top/bottom-N selection",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T15",
+     "evidence": "extreme-case annotation",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "typographic emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "source line present",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T38",
+     "evidence": "question title",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "'the gap: 7.4 years of life' headline stat",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T25",
+     "evidence": "'deprivation explains\u2026'; '~4 points costs roughly a year'",
+     "source": "visual",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S3_V1.png",
+     "model": "claude-sonnet-4.5",
+     "cell": "V2_DA_s0"
+    },
+    {
+     "img": "bundle/sibs/S3_V2.png",
+     "model": "deepseek-v4-pro-0813",
+     "cell": "V2_DA_s4"
+    },
+    {
+     "img": "bundle/sibs/S3_V3.png",
+     "model": "kimi-k2.7-code",
+     "cell": "V2_DA_s2"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S4",
+   "cell": "V2IX_DC_s0",
+   "model": "kimi-k2.7-code",
+   "dataset": "DC",
+   "interactive": true,
+   "regime": "free",
+   "title": "The UK household spending divide",
+   "chart": "bundle/charts/S4.png",
+   "live": "bundle/stimuli/S4.html",
+   "keys": [
+    {
+     "item": "T56",
+     "evidence": "dropdown menu",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T51",
+     "evidence": "sortable ordering",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T47",
+     "evidence": "exploration buttons",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "css emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T29",
+     "evidence": "valenced colours",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T04",
+     "evidence": "dashed reference line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "constructed summary score",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T01",
+     "evidence": "no source citation",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T42",
+     "evidence": "title metaphor: 'eating London's weekly budget alive'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T41",
+     "evidence": "analogy: premium \u2248 'entire weekly food bill'",
+     "source": "visual",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S4_V1.png",
+     "model": "gpt-5.6-luna",
+     "cell": "V2IX_DC_s0",
+     "live": "bundle/sibs/S4_V1.html"
+    },
+    {
+     "img": "bundle/sibs/S4_V2.png",
+     "model": "claude-sonnet-4.5",
+     "cell": "V2IX_DC_s0",
+     "live": "bundle/sibs/S4_V2.html"
+    },
+    {
+     "img": "bundle/sibs/S4_V3.png",
+     "model": "gemini-3.8-flash",
+     "cell": "V2IX_DC_s0",
+     "live": "bundle/sibs/S4_V3.html"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S5",
+   "cell": "V2_DC_s0",
+   "model": "gemini-3.8-flash",
+   "dataset": "DC",
+   "interactive": false,
+   "regime": "free",
+   "title": "A. Housing (net), Fuel & Power\\nLondon costs outstrip all other regions",
+   "chart": "bundle/charts/S5.png",
+   "live": null,
+   "keys": [
+    {
+     "item": "T04",
+     "evidence": "reference/threshold line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "typographic emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "source line present",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T25",
+     "evidence": "'How housing costs choke\u2026'; 'forcing\u2026to fall'; 'sacrifice'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T42",
+     "evidence": "'Rent Trap'; 'Devour'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T43",
+     "evidence": "parallel panel subtitles: 'outstrip\u2026' / 'sinks to bottom\u2026'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "three stat cards",
+     "source": "visual",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S5_V1.png",
+     "model": "claude-sonnet-4.5",
+     "cell": "V2_DC_s2"
+    },
+    {
+     "img": "bundle/sibs/S5_V2.png",
+     "model": "kimi-k2.7-code",
+     "cell": "V2_DC_s3"
+    },
+    {
+     "img": "bundle/sibs/S5_V3.png",
+     "model": "gpt-5.6-luna",
+     "cell": "V2_DC_s1"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S6",
+   "cell": "TGC1_DC",
+   "model": "deepseek-v4-pro-0813",
+   "dataset": "DC",
+   "interactive": false,
+   "regime": "directed",
+   "title": "The Geography of Household Budgets (The London Effect)",
+   "chart": "bundle/charts/S6.png",
+   "live": null,
+   "keys": [
+    {
+     "item": "T12",
+     "evidence": "'Further reading: The Geography of Inequality, Danny Dorling'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T20",
+     "evidence": "fabricated byline: 'Dr. Sarah Thompson, Economic Geographer' \u2014 debrief note",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T21",
+     "evidence": "first-person anecdote: 'I remember my first week in London\u2026'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T30",
+     "evidence": "multi-bar clutter; floating region labels",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T28",
+     "evidence": "region names colour-coded as text",
+     "source": "visual",
+     "status": "accepted-arguable"
+    },
+    {
+     "item": "T34",
+     "evidence": "styled region-name classes",
+     "source": "visual",
+     "status": "accepted-arguable"
+    },
+    {
+     "item": "T04",
+     "evidence": "UK-average zero line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "emphasis typography",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "source line present",
+     "source": "auto",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S6_V1.png",
+     "model": "claude-sonnet-4.5",
+     "cell": "V2_DC_s2"
+    },
+    {
+     "img": "bundle/sibs/S6_V2.png",
+     "model": "gemini-3.8-flash",
+     "cell": "V2_DC_s1"
+    },
+    {
+     "img": "bundle/sibs/S6_V3.png",
+     "model": "kimi-k2.7-code",
+     "cell": "V2_DC_s3"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S7",
+   "cell": "TGC2_DB",
+   "model": "gpt-5.6-luna",
+   "dataset": "DB",
+   "interactive": false,
+   "regime": "directed",
+   "title": "The road came back \u2014 but not all the way",
+   "chart": "bundle/charts/S7.png",
+   "live": null,
+   "keys": [
+    {
+     "item": "T02",
+     "evidence": "series labelled 'Health score'; footnote confesses it is the HGV series",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T14",
+     "evidence": "COVID/context box with provisional-quarter facts",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T22",
+     "evidence": "decorative glow/shadow bands under lines",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T24",
+     "evidence": "second axis squashed 0-6; score annotated as '4.0 bn'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T26",
+     "evidence": "dual axis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T27",
+     "evidence": "'The road came back'; long climb / sudden brake",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T36",
+     "evidence": "'65.7 bn' stated twice in one sentence + repeated in annotation",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T39",
+     "evidence": "scare quotes around 'Health score'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T40",
+     "evidence": "caption: 'A modest long-run reset'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T44",
+     "evidence": "'Like a tide that never quite returns'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T17",
+     "evidence": "context box: categories 'are not an all-traffic total'",
+     "source": "visual",
+     "status": "accepted-arguable"
+    },
+    {
+     "item": "T32",
+     "evidence": "'Health score' = HGV series spliced under an unrelated name",
+     "source": "visual",
+     "status": "accepted-arguable"
+    },
+    {
+     "item": "T08",
+     "evidence": "4-quarter averaging",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T10",
+     "evidence": "binning/grouping",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T33",
+     "evidence": "shaded disruption band",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "emphasis typography",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T51",
+     "evidence": "ordering",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "source line present",
+     "source": "auto",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S7_V1.png",
+     "model": "gemini-3.8-flash",
+     "cell": "V2_DB_s2"
+    },
+    {
+     "img": "bundle/sibs/S7_V2.png",
+     "model": "glm-5.3-flash",
+     "cell": "V2_DB_s1"
+    },
+    {
+     "img": "bundle/sibs/S7_V3.png",
+     "model": "deepseek-v4-pro-0813",
+     "cell": "V2_DB_s4"
+    }
+   ],
+   "debrief": ""
+  },
+  {
+   "slot": "S8",
+   "cell": "TGC3_DA",
+   "model": "gemini-3.8-flash",
+   "dataset": "DA",
+   "interactive": true,
+   "regime": "directed",
+   "title": "The Cost of Living: Where Deprivation Exacts a Tax in Premature Death",
+   "chart": "bundle/charts/S8.png",
+   "live": "bundle/stimuli/S8.html",
+   "keys": [
+    {
+     "item": "T45",
+     "evidence": "'The Cost of Living: Where Deprivation Exacts a Tax in Premature Death'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T54",
+     "evidence": "'What pattern to look for:' explicit reading-instruction box",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T50",
+     "evidence": "England Avg IMD reference line, named in the guidance",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T53",
+     "evidence": "'Suggested Case Studies' chips + search placeholder 'e.g. Blackpool'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T52",
+     "evidence": "entrance/transition animation (verified live)",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T06",
+     "evidence": "tier-filter buttons as filtering control",
+     "source": "visual",
+     "status": "accepted-arguable"
+    },
+    {
+     "item": "T25",
+     "evidence": "'Every point\u2026 directly converts into years surrendered'",
+     "source": "visual",
+     "status": "accepted"
+    },
+    {
+     "item": "T09",
+     "evidence": "'2.6 times higher' headline stat",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T29",
+     "evidence": "valenced colours",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T47",
+     "evidence": "toggles/exploration",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T49",
+     "evidence": "opinionated defaults",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T55",
+     "evidence": "search box",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T04",
+     "evidence": "average line",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T37",
+     "evidence": "emphasis",
+     "source": "auto",
+     "status": "accepted"
+    },
+    {
+     "item": "T11",
+     "evidence": "kicker/source present",
+     "source": "auto",
+     "status": "accepted"
+    }
+   ],
+   "siblings": [
+    {
+     "img": "bundle/sibs/S8_V1.png",
+     "model": "gpt-5.6-luna",
+     "cell": "V2IX_DA_s0",
+     "live": "bundle/sibs/S8_V1.html"
+    },
+    {
+     "img": "bundle/sibs/S8_V2.png",
+     "model": "kimi-k2.7-code",
+     "cell": "V2IX_DA_s0",
+     "live": "bundle/sibs/S8_V2.html"
+    },
+    {
+     "img": "bundle/sibs/S8_V3.png",
+     "model": "deepseek-v4-pro-0813",
+     "cell": "V2_DA_s4"
+    }
+   ],
+   "debrief": ""
+  }
+ ]
+}

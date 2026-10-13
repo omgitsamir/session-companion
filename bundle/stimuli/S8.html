@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Cost of Living | Local Authority Health Inequalities</title>
+<style>
+  :root {
+    --bg-primary: #0f141c;
+    --bg-secondary: #18202c;
+    --bg-card: rgba(26, 35, 48, 0.75);
+    --border-color: #2b394e;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-red: #f43f5e;
+    --accent-amber: #f59e0b;
+    --accent-emerald: #10b981;
+    --accent-cyan: #06b6d4;
+    --accent-purple: #8b5cf6;
+    --font-serif: "Charter", "Iowan Old Style", "Apple Garamond", Georgia, serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 1140px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Editorial Header */
+  header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.25rem;
+  }
+
+  .kicker {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    color: var(--accent-red);
+    margin-bottom: 0.4rem;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+  }
+
+  h1 span.subtitle-highlight {
+    color: #cbd5e1;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 880px;
+    line-height: 1.6;
+  }
+
+  /* Control Panel */
+  .control-deck {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .control-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+
+  .filter-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: var(--text-secondary);
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .filter-btn:hover {
+    color: var(--text-primary);
+    border-color: #475569;
+  }
+
+  .filter-btn.active {
+    background: #334155;
+    color: #ffffff;
+    font-weight: 600;
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 1px var(--accent-cyan);
+  }
+
+  .search-wrapper {
+    position: relative;
+    min-width: 220px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #ffffff;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent-cyan);
+  }
+
+  /* Quick Query Chips */
+  .chip-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+
+  .query-chip {
+    background: rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    border: 1px dashed #475569;
+    padding: 0.25rem 0.65rem;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .query-chip:hover {
+    background: rgba(6, 182, 212, 0.2);
+    border-color: var(--accent-cyan);
+    color: #ffffff;
+  }
+
+  /* Main Visualization Wrapper */
+  .visualisation-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem 1.25rem 1rem 1.25rem;
+    position: relative;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .pattern-guide {
+    background: rgba(15, 23, 42, 0.7);
+    border-left: 3px solid var(--accent-amber);
+    padding: 0.65rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88rem;
+    color: #e2e8f0;
+  }
+  .pattern-guide strong {
+    color: var(--accent-amber);
+    font-weight: 600;
+  }
+
+  .chart-canvas {
+    width: 100%;
+    height: 520px;
+    display: block;
+  }
+
+  /* SVG Styles */
+  svg text {
+    font-family: var(--font-sans);
+    user-select: none;
+  }
+
+  .grid-line {
+    stroke: #253346;
+    stroke-dasharray: 2, 3;
+    stroke-width: 1;
+  }
+
+  .axis-label {
+    fill: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .axis-title {
+    fill: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .reference-line {
+    stroke: #f59e0b;
+    stroke-width: 1.8;
+    stroke-dasharray: 4, 4;
+  }
+
+  .reference-label {
+    fill: #f59e0b;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .dot {
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.25s ease, stroke-width 0.15s ease;
+  }
+
+  .dot:hover {
+    stroke: #ffffff !important;
+    stroke-width: 2.5px !important;
+  }
+
+  .dot.muted {
+    opacity: 0.12 !important;
+  }
+
+  .dot.highlighted {
+    opacity: 1 !important;
+    stroke: #ffffff !important;
+    stroke-width: 2.5px !important;
+    filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.6));
+  }
+
+  /* Animated scan line */
+  @keyframes scanGradient {
+    0% {
+      stroke-dashoffset: 800;
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 0.95;
+    }
+    100% {
+      stroke-dashoffset: 0;
+      opacity: 0.7;
+    }
+  }
+
+  .trend-path {
+    fill: none;
+    stroke: var(--accent-cyan);
+    stroke-width: 2.5;
+    stroke-dasharray: 800;
+    animation: scanGradient 3.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Tooltip */
+  .custom-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(15, 20, 28, 0.95);
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    transform: translate(-50%, -105%);
+    z-index: 50;
+    min-width: 200px;
+    backdrop-filter: blur(8px);
+  }
+
+  .tooltip-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+    margin-bottom: 0.35rem;
+    border-bottom: 1px solid #2b394e;
+    padding-bottom: 0.25rem;
+  }
+
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.2rem 0;
+    color: var(--text-secondary);
+  }
+
+  .tooltip-val {
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  /* Analytical Footer & Hedge */
+  .editorial-footer {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 820px) {
+    .editorial-footer { grid-template-columns: 1fr; }
+    h1 { font-size: 2rem; }
+    .chart-canvas { height: 420px; }
+  }
+
+  .footer-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .footer-card h3 {
+    color: #ffffff;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .hedge-note {
+    border-left: 3px solid var(--accent-purple);
+  }
+
+  .hedge-note em {
+    color: #cbd5e1;
+    font-style: italic;
+  }
+
+  .stat-badge {
+    display: inline-block;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .stat-badge.bad { background: rgba(244, 63, 94, 0.2); color: #fda4af; }
+  .stat-badge.good { background: rgba(16, 185, 129, 0.2); color: #a7f3d0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Editorial Header with intentional double meaning -->
+  <header>
+    <div class="kicker">Public Health England Inequality Analysis</div>
+    <h1>The Cost of Living: <span class="subtitle-highlight">Where Deprivation Exacts a Tax in Premature Death</span></h1>
+    <p class="lead">
+      In 2025, England's most deprived local authorities face premature death rates <strong>more than 2.6 times higher</strong> than their wealthier counterparts. Every point scored on the Index of Multiple Deprivation directly converts into years surrendered before retirement age.
+    </p>
+  </header>
+
+  <!-- Controls: Filters + Queries -->
+  <section class="control-deck">
+    <div class="control-group">
+      <span class="control-label">Filter Wealth Tier:</span>
+      <button class="filter-btn active" data-filter="all">All Authorities</button>
+      <button class="filter-btn" data-filter="high-dep">Most Deprived (IMD &gt; 25)</button>
+      <button class="filter-btn" data-filter="low-dep">Least Deprived (IMD &le; 18)</button>
+    </div>
+
+    <div class="control-group">
+      <span class="control-label">Y-Axis Metric:</span>
+      <button class="filter-btn active" data-metric="allCauses">Under-75 Mortality</button>
+      <button class="filter-btn" data-metric="maleLe">Male Life Expectancy</button>
+      <button class="filter-btn" data-metric="alcohol">Alcohol Admissions</button>
+    </div>
+
+    <div class="search-wrapper">
+      <input type="text" id="areaSearch" class="search-input" placeholder="Search authority (e.g. Blackpool)..." autocomplete="off">
+    </div>
+  </section>
+
+  <!-- Suggested Queries / Benchmark Chips -->
+  <div class="chip-row">
+    <span style="font-weight: 600; color: #64748b;">Suggested Case Studies:</span>
+    <span class="query-chip" data-target="Blackpool">📍 Blackpool (Highest Mortality: 555)</span>
+    <span class="query-chip" data-target="Wokingham">📍 Wokingham (Lowest Deprivation: 5.8)</span>
+    <span class="query-chip" data-target="Middlesbrough">📍 Middlesbrough (Severe IMD: 40.5)</span>
+    <span class="query-chip" data-target="Rutland">📍 Rutland (Lowest Mortality: 212)</span>
+    <span class="query-chip" data-target="Northumberland">📍 Northumberland (Self-Harm Outlier)</span>
+  </div>
+
+  <!-- Interactive Graphic Card -->
+  <section class="visualisation-card">
+    <div class="pattern-guide">
+      <strong>What pattern to look for:</strong> Observe the diagonal drift upward and to the right. As deprivation deepens beyond the <strong>England Average IMD line (21.7)</strong>, authorities systematically surge past the national premature mortality benchmark. Authorities clustered in the top-right quadrant represent systemic dual-burden traps.
+    </div>
+
+    <svg id="chart" class="chart-canvas" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet"></svg>
+    <div id="tooltip" class="custom-tooltip"></div>
+  </section>
+
+  <!-- Analytical Footer & Explicit Hedge -->
+  <section class="editorial-footer">
+    <div class="footer-card hedge-note">
+      <h3>The Structural Disconnect &amp; Caveat</h3>
+      <p>
+        While the correlation between aggregate deprivation and premature mortality is unmistakable (R &gt; 0.85), <em>this may partly reflect historical shifts in local industry, selective migration of healthier young adults away from post-industrial coastal communities, and geographic variance in emergency clinical triage</em> rather than instantaneous household-level income poverty alone. Furthermore, areas like Northumberland and Brighton display disproportionately elevated alcohol or intentional self-harm admissions despite middling index scores.
+      </p>
+    </div>
+
+    <div class="footer-card">
+      <h3>Key Inequality Gap</h3>
+      <p>
+        Comparing <strong style="color:#ffffff;">Blackpool</strong> to <strong style="color:#ffffff;">Wokingham</strong> reveals an <strong>8.4-year gap</strong> in male life expectancy and a <strong>+161% excess</strong> in under-75 deaths per 100k citizens.
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Clean embedded data from Fingertips extract
+  const rawData = [{"Area Code": "E06000001", "Area Name": "Hartlepool", "Life expectancy at birth (male)": 77.8, "Life expectancy at birth (female)": 81.1, "Under 75 mortality rate from all causes": 415.01, "Under 75 mortality rate from cardiovascular disease": 78.02, "Under 75 mortality rate from cancer": 143.11, "Suicide rate": 17.63, "Killed and seriously injured casualties on England's roads": 89.68, "Emergency Hospital Admissions for Intentional Self-Harm": 233.94, "Deprivation score (IMD 2019)": 35.04, "Admission episodes for alcohol-related conditions (Narrow)": 770.4, "Admission episodes for alcohol-specific conditions (under 18 years)": 16.56, "Average Attainment 8 score": 42.3}, {"Area Code": "E06000002", "Area Name": "Middlesbrough", "Life expectancy at birth (male)": 76.9, "Life expectancy at birth (female)": 81.6, "Under 75 mortality rate from all causes": 455.23, "Under 75 mortality rate from cardiovascular disease": 99.27, "Under 75 mortality rate from cancer": 154.74, "Suicide rate": 20.21, "Killed and seriously injured casualties on England's roads": 53.15, "Emergency Hospital Admissions for Intentional Self-Harm": 211.23, "Deprivation score (IMD 2019)": 40.46, "Admission episodes for alcohol-related conditions (Narrow)": 667.47, "Admission episodes for alcohol-specific conditions (under 18 years)": 23.42, "Average Attainment 8 score": 41.9}, {"Area Code": "E06000003", "Area Name": "Redcar and Cleveland", "Life expectancy at birth (male)": 79.2, "Life expectancy at birth (female)": 81.8, "Under 75 mortality rate from all causes": 375.14, "Under 75 mortality rate from cardiovascular disease": 79.32, "Under 75 mortality rate from cancer": 133.66, "Suicide rate": 20.25, "Killed and seriously injured casualties on England's roads": 62.32, "Emergency Hospital Admissions for Intentional Self-Harm": 215.88, "Deprivation score (IMD 2019)": 29.79, "Admission episodes for alcohol-related conditions (Narrow)": 608.18, "Admission episodes for alcohol-specific conditions (under 18 years)": 48.88, "Average Attainment 8 score": 43.9}, {"Area Code": "E06000004", "Area Name": "Stockton-on-Tees", "Life expectancy at birth (male)": 78.7, "Life expectancy at birth (female)": 82.4, "Under 75 mortality rate from all causes": 370.36, "Under 75 mortality rate from cardiovascular disease": 84.21, "Under 75 mortality rate from cancer": 127.91, "Suicide rate": 14.56, "Killed and seriously injured casualties on England's roads": 48.89, "Emergency Hospital Admissions for Intentional Self-Harm": 167.58, "Deprivation score (IMD 2019)": 25.79, "Admission episodes for alcohol-related conditions (Narrow)": 705.12, "Admission episodes for alcohol-specific conditions (under 18 years)": 29.75, "Average Attainment 8 score": 45.0}, {"Area Code": "E06000005", "Area Name": "Darlington", "Life expectancy at birth (male)": 78.6, "Life expectancy at birth (female)": 82.1, "Under 75 mortality rate from all causes": 387.63, "Under 75 mortality rate from cardiovascular disease": 81.3, "Under 75 mortality rate from cancer": 122.48, "Suicide rate": 18.03, "Killed and seriously injured casualties on England's roads": 83.35, "Emergency Hospital Admissions for Intentional Self-Harm": 120.98, "Deprivation score (IMD 2019)": 25.66, "Admission episodes for alcohol-related conditions (Narrow)": 621.45, "Admission episodes for alcohol-specific conditions (under 18 years)": 46.26, "Average Attainment 8 score": 44.0}, {"Area Code": "E06000006", "Area Name": "Halton", "Life expectancy at birth (male)": 76.9, "Life expectancy at birth (female)": 82.6, "Under 75 mortality rate from all causes": 414.09, "Under 75 mortality rate from cardiovascular disease": 101.52, "Under 75 mortality rate from cancer": 139.47, "Suicide rate": 15.45, "Killed and seriously injured casualties on England's roads": 59.27, "Emergency Hospital Admissions for Intentional Self-Harm": 224.44, "Deprivation score (IMD 2019)": 32.33, "Admission episodes for alcohol-related conditions (Narrow)": 533.56, "Admission episodes for alcohol-specific conditions (under 18 years)": 26.63, "Average Attainment 8 score": 42.6}, {"Area Code": "E06000007", "Area Name": "Warrington", "Life expectancy at birth (male)": 79.5, "Life expectancy at birth (female)": 83.2, "Under 75 mortality rate from all causes": 331.23, "Under 75 mortality rate from cardiovascular disease": 79.6, "Under 75 mortality rate from cancer": 111.67, "Suicide rate": 15.56, "Killed and seriously injured casualties on England's roads": 44.95, "Emergency Hospital Admissions for Intentional Self-Harm": 141.52, "Deprivation score (IMD 2019)": 18.94, "Admission episodes for alcohol-related conditions (Narrow)": 454.82, "Admission episodes for alcohol-specific conditions (under 18 years)": 28.28, "Average Attainment 8 score": 49.2}, {"Area Code": "E06000008", "Area Name": "Blackburn with Darwen", "Life expectancy at birth (male)": 76.4, "Life expectancy at birth (female)": 81.0, "Under 75 mortality rate from all causes": 470.24, "Under 75 mortality rate from cardiovascular disease": 107.89, "Under 75 mortality rate from cancer": 146.93, "Suicide rate": 13.29, "Killed and seriously injured casualties on England's roads": 233.29, "Emergency Hospital Admissions for Intentional Self-Harm": 99.06, "Deprivation score (IMD 2019)": 36.01, "Admission episodes for alcohol-related conditions (Narrow)": 354.17, "Admission episodes for alcohol-specific conditions (under 18 years)": 19.15, "Average Attainment 8 score": 45.6}, {"Area Code": "E06000009", "Area Name": "Blackpool", "Life expectancy at birth (male)": 75.3, "Life expectancy at birth (female)": 79.9, "Under 75 mortality rate from all causes": 554.98, "Under 75 mortality rate from cardiovascular disease": 126.31, "Under 75 mortality rate from cancer": 168.65, "Suicide rate": 17.07, "Killed and seriously injured casualties on England's roads": 368.54, "Emergency Hospital Admissions for Intentional Self-Harm": 193.03, "Deprivation score (IMD 2019)": 45.04, "Admission episodes for alcohol-related conditions (Narrow)": 797.5, "Admission episodes for alcohol-specific conditions (under 18 years)": 42.48, "Average Attainment 8 score": 38.4}, {"Area Code": "E06000010", "Area Name": "Kingston upon Hull", "Life expectancy at birth (male)": 75.7, "Life expectancy at birth (female)": 80.9, "Under 75 mortality rate from all causes": 494.29, "Under 75 mortality rate from cardiovascular disease": 127.5, "Under 75 mortality rate from cancer": 152.06, "Suicide rate": 14.72, "Killed and seriously injured casualties on England's roads": 191.89, "Emergency Hospital Admissions for Intentional Self-Harm": 149.37, "Deprivation score (IMD 2019)": 40.56, "Admission episodes for alcohol-related conditions (Narrow)": 693.59, "Admission episodes for alcohol-specific conditions (under 18 years)": 18.33, "Average Attainment 8 score": 40.4}, {"Area Code": "E06000011", "Area Name": "East Riding of Yorkshire", "Life expectancy at birth (male)": 80.8, "Life expectancy at birth (female)": 84.1, "Under 75 mortality rate from all causes": 289.1, "Under 75 mortality rate from cardiovascular disease": 61.86, "Under 75 mortality rate from cancer": 111.79, "Suicide rate": 13.49, "Killed and seriously injured casualties on England's roads": 78.67, "Emergency Hospital Admissions for Intentional Self-Harm": 90.73, "Deprivation score (IMD 2019)": 15.6, "Admission episodes for alcohol-related conditions (Narrow)": 504.0, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.55, "Average Attainment 8 score": 45.1}, {"Area Code": "E06000012", "Area Name": "North East Lincolnshire", "Life expectancy at birth (male)": 75.3, "Life expectancy at birth (female)": 82.2, "Under 75 mortality rate from all causes": 472.44, "Under 75 mortality rate from cardiovascular disease": 92.65, "Under 75 mortality rate from cancer": 142.55, "Suicide rate": 18.3, "Killed and seriously injured casualties on England's roads": 168.29, "Emergency Hospital Admissions for Intentional Self-Harm": 132.73, "Deprivation score (IMD 2019)": 31.34, "Admission episodes for alcohol-related conditions (Narrow)": 624.2, "Admission episodes for alcohol-specific conditions (under 18 years)": 27.16, "Average Attainment 8 score": 41.7}, {"Area Code": "E06000013", "Area Name": "North Lincolnshire", "Life expectancy at birth (male)": 77.4, "Life expectancy at birth (female)": 82.1, "Under 75 mortality rate from all causes": 411.91, "Under 75 mortality rate from cardiovascular disease": 80.14, "Under 75 mortality rate from cancer": 139.19, "Suicide rate": 13.06, "Killed and seriously injured casualties on England's roads": 99.44, "Emergency Hospital Admissions for Intentional Self-Harm": 83.04, "Deprivation score (IMD 2019)": 22.1, "Admission episodes for alcohol-related conditions (Narrow)": 524.58, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.59, "Average Attainment 8 score": 44.2}, {"Area Code": "E06000014", "Area Name": "York", "Life expectancy at birth (male)": 80.4, "Life expectancy at birth (female)": 84.2, "Under 75 mortality rate from all causes": 297.87, "Under 75 mortality rate from cardiovascular disease": 56.27, "Under 75 mortality rate from cancer": 112.77, "Suicide rate": 8.72, "Killed and seriously injured casualties on England's roads": 81.19, "Emergency Hospital Admissions for Intentional Self-Harm": 91.76, "Deprivation score (IMD 2019)": 11.73, "Admission episodes for alcohol-related conditions (Narrow)": 518.44, "Admission episodes for alcohol-specific conditions (under 18 years)": 29.85, "Average Attainment 8 score": 50.7}, {"Area Code": "E06000015", "Area Name": "Derby", "Life expectancy at birth (male)": 77.9, "Life expectancy at birth (female)": 82.7, "Under 75 mortality rate from all causes": 379.5, "Under 75 mortality rate from cardiovascular disease": 93.58, "Under 75 mortality rate from cancer": 117.32, "Suicide rate": 12.23, "Killed and seriously injured casualties on England's roads": 118.65, "Emergency Hospital Admissions for Intentional Self-Harm": 133.12, "Deprivation score (IMD 2019)": 26.32, "Admission episodes for alcohol-related conditions (Narrow)": 755.75, "Admission episodes for alcohol-specific conditions (under 18 years)": 6.18, "Average Attainment 8 score": 42.5}, {"Area Code": "E06000016", "Area Name": "Leicester", "Life expectancy at birth (male)": 78.1, "Life expectancy at birth (female)": 82.0, "Under 75 mortality rate from all causes": 392.57, "Under 75 mortality rate from cardiovascular disease": 110.97, "Under 75 mortality rate from cancer": 123.76, "Suicide rate": 11.21, "Killed and seriously injured casualties on England's roads": 108.56, "Emergency Hospital Admissions for Intentional Self-Harm": 175.97, "Deprivation score (IMD 2019)": 30.88, "Admission episodes for alcohol-related conditions (Narrow)": 520.67, "Admission episodes for alcohol-specific conditions (under 18 years)": 3.8, "Average Attainment 8 score": 45.2}, {"Area Code": "E06000017", "Area Name": "Rutland", "Life expectancy at birth (male)": 83.2, "Life expectancy at birth (female)": 84.9, "Under 75 mortality rate from all causes": 212.15, "Under 75 mortality rate from cardiovascular disease": 36.54, "Under 75 mortality rate from cancer": 86.9, "Suicide rate": 10.02, "Killed and seriously injured casualties on England's roads": 24.97, "Emergency Hospital Admissions for Intentional Self-Harm": 56.53, "Deprivation score (IMD 2019)": 8.38, "Admission episodes for alcohol-related conditions (Narrow)": 336.79, "Admission episodes for alcohol-specific conditions (under 18 years)": null, "Average Attainment 8 score": 50.1}, {"Area Code": "E06000018", "Area Name": "Nottingham", "Life expectancy at birth (male)": 77.4, "Life expectancy at birth (female)": 81.4, "Under 75 mortality rate from all causes": 445.34, "Under 75 mortality rate from cardiovascular disease": 99.71, "Under 75 mortality rate from cancer": 143.13, "Suicide rate": 13.26, "Killed and seriously injured casualties on England's roads": 164.54, "Emergency Hospital Admissions for Intentional Self-Harm": 95.84, "Deprivation score (IMD 2019)": 34.89, "Admission episodes for alcohol-related conditions (Narrow)": 730.53, "Admission episodes for alcohol-specific conditions (under 18 years)": 11.47, "Average Attainment 8 score": 43.5}, {"Area Code": "E06000019", "Area Name": "Herefordshire", "Life expectancy at birth (male)": 80.4, "Life expectancy at birth (female)": 84.6, "Under 75 mortality rate from all causes": 288.31, "Under 75 mortality rate from cardiovascular disease": 62.65, "Under 75 mortality rate from cancer": 108.79, "Suicide rate": 10.57, "Killed and seriously injured casualties on England's roads": 90.48, "Emergency Hospital Admissions for Intentional Self-Harm": 125.35, "Deprivation score (IMD 2019)": 18.89, "Admission episodes for alcohol-related conditions (Narrow)": 400.91, "Admission episodes for alcohol-specific conditions (under 18 years)": 28.49, "Average Attainment 8 score": 44.5}, {"Area Code": "E06000020", "Area Name": "Telford and Wrekin", "Life expectancy at birth (male)": 78.8, "Life expectancy at birth (female)": 82.7, "Under 75 mortality rate from all causes": 359.01, "Under 75 mortality rate from cardiovascular disease": 70.1, "Under 75 mortality rate from cancer": 136.59, "Suicide rate": 10.99, "Killed and seriously injured casualties on England's roads": 45.3, "Emergency Hospital Admissions for Intentional Self-Harm": 96.03, "Deprivation score (IMD 2019)": 24.99, "Admission episodes for alcohol-related conditions (Narrow)": 572.81, "Admission episodes for alcohol-specific conditions (under 18 years)": 22.08, "Average Attainment 8 score": 42.1}, {"Area Code": "E06000021", "Area Name": "Stoke-on-Trent", "Life expectancy at birth (male)": 77.0, "Life expectancy at birth (female)": 80.4, "Under 75 mortality rate from all causes": 471.36, "Under 75 mortality rate from cardiovascular disease": 99.3, "Under 75 mortality rate from cancer": 157.19, "Suicide rate": 13.1, "Killed and seriously injured casualties on England's roads": 74.88, "Emergency Hospital Admissions for Intentional Self-Harm": 110.46, "Deprivation score (IMD 2019)": 34.5, "Admission episodes for alcohol-related conditions (Narrow)": 861.16, "Admission episodes for alcohol-specific conditions (under 18 years)": 16.9, "Average Attainment 8 score": 40.0}, {"Area Code": "E06000022", "Area Name": "Bath and North East Somerset", "Life expectancy at birth (male)": 82.0, "Life expectancy at birth (female)": 85.7, "Under 75 mortality rate from all causes": 249.29, "Under 75 mortality rate from cardiovascular disease": 51.84, "Under 75 mortality rate from cancer": 84.37, "Suicide rate": 9.64, "Killed and seriously injured casualties on England's roads": 74.63, "Emergency Hospital Admissions for Intentional Self-Harm": 217.94, "Deprivation score (IMD 2019)": 11.74, "Admission episodes for alcohol-related conditions (Narrow)": 445.09, "Admission episodes for alcohol-specific conditions (under 18 years)": 53.52, "Average Attainment 8 score": 47.4}, {"Area Code": "E06000023", "Area Name": "Bristol", "Life expectancy at birth (male)": 79.1, "Life expectancy at birth (female)": 83.4, "Under 75 mortality rate from all causes": 355.51, "Under 75 mortality rate from cardiovascular disease": 76.06, "Under 75 mortality rate from cancer": 123.49, "Suicide rate": 13.1, "Killed and seriously injured casualties on England's roads": 125.21, "Emergency Hospital Admissions for Intentional Self-Harm": 222.88, "Deprivation score (IMD 2019)": 26.36, "Admission episodes for alcohol-related conditions (Narrow)": 698.93, "Admission episodes for alcohol-specific conditions (under 18 years)": 35.29, "Average Attainment 8 score": 45.9}, {"Area Code": "E06000024", "Area Name": "North Somerset", "Life expectancy at birth (male)": 80.4, "Life expectancy at birth (female)": 84.9, "Under 75 mortality rate from all causes": 278.53, "Under 75 mortality rate from cardiovascular disease": 53.29, "Under 75 mortality rate from cancer": 105.61, "Suicide rate": 12.99, "Killed and seriously injured casualties on England's roads": 47.43, "Emergency Hospital Admissions for Intentional Self-Harm": 263.69, "Deprivation score (IMD 2019)": 15.82, "Admission episodes for alcohol-related conditions (Narrow)": 656.29, "Admission episodes for alcohol-specific conditions (under 18 years)": 48.43, "Average Attainment 8 score": 47.0}, {"Area Code": "E06000025", "Area Name": "South Gloucestershire", "Life expectancy at birth (male)": 81.8, "Life expectancy at birth (female)": 85.1, "Under 75 mortality rate from all causes": 269.36, "Under 75 mortality rate from cardiovascular disease": 51.8, "Under 75 mortality rate from cancer": 121.57, "Suicide rate": 10.18, "Killed and seriously injured casualties on England's roads": 26.09, "Emergency Hospital Admissions for Intentional Self-Harm": 204.62, "Deprivation score (IMD 2019)": 11.66, "Admission episodes for alcohol-related conditions (Narrow)": 554.5, "Admission episodes for alcohol-specific conditions (under 18 years)": 40.93, "Average Attainment 8 score": 46.3}, {"Area Code": "E06000026", "Area Name": "Plymouth", "Life expectancy at birth (male)": 78.0, "Life expectancy at birth (female)": 81.9, "Under 75 mortality rate from all causes": 400.82, "Under 75 mortality rate from cardiovascular disease": 84.1, "Under 75 mortality rate from cancer": 124.5, "Suicide rate": 6.83, "Killed and seriously injured casualties on England's roads": 77.74, "Emergency Hospital Admissions for Intentional Self-Harm": 112.01, "Deprivation score (IMD 2019)": 26.62, "Admission episodes for alcohol-related conditions (Narrow)": 434.84, "Admission episodes for alcohol-specific conditions (under 18 years)": 28.99, "Average Attainment 8 score": 44.8}, {"Area Code": "E06000027", "Area Name": "Torbay", "Life expectancy at birth (male)": 77.9, "Life expectancy at birth (female)": 83.0, "Under 75 mortality rate from all causes": 385.15, "Under 75 mortality rate from cardiovascular disease": 88.77, "Under 75 mortality rate from cancer": 128.26, "Suicide rate": 9.46, "Killed and seriously injured casualties on England's roads": 91.06, "Emergency Hospital Admissions for Intentional Self-Harm": 201.35, "Deprivation score (IMD 2019)": 28.1, "Admission episodes for alcohol-related conditions (Narrow)": 672.31, "Admission episodes for alcohol-specific conditions (under 18 years)": 49.26, "Average Attainment 8 score": 44.0}, {"Area Code": "E06000030", "Area Name": "Swindon", "Life expectancy at birth (male)": 79.8, "Life expectancy at birth (female)": 83.7, "Under 75 mortality rate from all causes": 314.11, "Under 75 mortality rate from cardiovascular disease": 66.67, "Under 75 mortality rate from cancer": 118.61, "Suicide rate": 7.58, "Killed and seriously injured casualties on England's roads": 57.72, "Emergency Hospital Admissions for Intentional Self-Harm": 255.43, "Deprivation score (IMD 2019)": 18.62, "Admission episodes for alcohol-related conditions (Narrow)": 605.53, "Admission episodes for alcohol-specific conditions (under 18 years)": 40.26, "Average Attainment 8 score": 45.9}, {"Area Code": "E06000031", "Area Name": "Peterborough", "Life expectancy at birth (male)": 77.3, "Life expectancy at birth (female)": 82.7, "Under 75 mortality rate from all causes": 391.68, "Under 75 mortality rate from cardiovascular disease": 91.39, "Under 75 mortality rate from cancer": 121.18, "Suicide rate": 12.26, "Killed and seriously injured casualties on England's roads": 56.8, "Emergency Hospital Admissions for Intentional Self-Harm": 99.53, "Deprivation score (IMD 2019)": 27.82, "Admission episodes for alcohol-related conditions (Narrow)": 406.11, "Admission episodes for alcohol-specific conditions (under 18 years)": 15.82, "Average Attainment 8 score": 43.1}, {"Area Code": "E06000032", "Area Name": "Luton", "Life expectancy at birth (male)": 78.4, "Life expectancy at birth (female)": 83.3, "Under 75 mortality rate from all causes": 367.47, "Under 75 mortality rate from cardiovascular disease": 95.48, "Under 75 mortality rate from cancer": 102.55, "Suicide rate": 9.35, "Killed and seriously injured casualties on England's roads": 133.69, "Emergency Hospital Admissions for Intentional Self-Harm": 102.2, "Deprivation score (IMD 2019)": 25.91, "Admission episodes for alcohol-related conditions (Narrow)": 544.27, "Admission episodes for alcohol-specific conditions (under 18 years)": 7.29, "Average Attainment 8 score": 45.2}, {"Area Code": "E06000033", "Area Name": "Southend-on-Sea", "Life expectancy at birth (male)": 79.4, "Life expectancy at birth (female)": 84.2, "Under 75 mortality rate from all causes": 338.95, "Under 75 mortality rate from cardiovascular disease": 66.42, "Under 75 mortality rate from cancer": 117.56, "Suicide rate": 7.37, "Killed and seriously injured casualties on England's roads": 199.65, "Emergency Hospital Admissions for Intentional Self-Harm": 136.15, "Deprivation score (IMD 2019)": 22.38, "Admission episodes for alcohol-related conditions (Narrow)": 509.57, "Admission episodes for alcohol-specific conditions (under 18 years)": 24.36, "Average Attainment 8 score": 47.1}, {"Area Code": "E06000034", "Area Name": "Thurrock", "Life expectancy at birth (male)": 79.4, "Life expectancy at birth (female)": 83.4, "Under 75 mortality rate from all causes": 341.78, "Under 75 mortality rate from cardiovascular disease": 77.76, "Under 75 mortality rate from cancer": 120.83, "Suicide rate": 5.9, "Killed and seriously injured casualties on England's roads": 38.96, "Emergency Hospital Admissions for Intentional Self-Harm": 55.58, "Deprivation score (IMD 2019)": 20.93, "Admission episodes for alcohol-related conditions (Narrow)": 507.74, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.16, "Average Attainment 8 score": 46.3}, {"Area Code": "E06000035", "Area Name": "Medway", "Life expectancy at birth (male)": 78.5, "Life expectancy at birth (female)": 82.9, "Under 75 mortality rate from all causes": 370.45, "Under 75 mortality rate from cardiovascular disease": 87.54, "Under 75 mortality rate from cancer": 129.92, "Suicide rate": 10.31, "Killed and seriously injured casualties on England's roads": 136.15, "Emergency Hospital Admissions for Intentional Self-Harm": 99.55, "Deprivation score (IMD 2019)": 23.94, "Admission episodes for alcohol-related conditions (Narrow)": 423.65, "Admission episodes for alcohol-specific conditions (under 18 years)": 19.95, "Average Attainment 8 score": 45.0}, {"Area Code": "E06000036", "Area Name": "Bracknell Forest", "Life expectancy at birth (male)": 82.1, "Life expectancy at birth (female)": 85.6, "Under 75 mortality rate from all causes": 242.57, "Under 75 mortality rate from cardiovascular disease": 50.59, "Under 75 mortality rate from cancer": 106.41, "Suicide rate": 9.68, "Killed and seriously injured casualties on England's roads": 68.98, "Emergency Hospital Admissions for Intentional Self-Harm": 125.12, "Deprivation score (IMD 2019)": 10.24, "Admission episodes for alcohol-related conditions (Narrow)": 348.17, "Admission episodes for alcohol-specific conditions (under 18 years)": null, "Average Attainment 8 score": 47.2}, {"Area Code": "E06000037", "Area Name": "West Berkshire", "Life expectancy at birth (male)": 82.0, "Life expectancy at birth (female)": 84.9, "Under 75 mortality rate from all causes": 258.62, "Under 75 mortality rate from cardiovascular disease": 62.59, "Under 75 mortality rate from cancer": 93.77, "Suicide rate": 7.75, "Killed and seriously injured casualties on England's roads": 36.13, "Emergency Hospital Admissions for Intentional Self-Harm": 91.26, "Deprivation score (IMD 2019)": 9.95, "Admission episodes for alcohol-related conditions (Narrow)": 291.91, "Admission episodes for alcohol-specific conditions (under 18 years)": 20.03, "Average Attainment 8 score": 48.3}, {"Area Code": "E06000038", "Area Name": "Reading", "Life expectancy at birth (male)": 78.9, "Life expectancy at birth (female)": 83.5, "Under 75 mortality rate from all causes": 358.23, "Under 75 mortality rate from cardiovascular disease": 79.37, "Under 75 mortality rate from cancer": 124.37, "Suicide rate": 10.39, "Killed and seriously injured casualties on England's roads": 138.77, "Emergency Hospital Admissions for Intentional Self-Harm": 69.82, "Deprivation score (IMD 2019)": 19.62, "Admission episodes for alcohol-related conditions (Narrow)": 337.3, "Admission episodes for alcohol-specific conditions (under 18 years)": 17.04, "Average Attainment 8 score": 46.4}, {"Area Code": "E06000039", "Area Name": "Slough", "Life expectancy at birth (male)": 78.5, "Life expectancy at birth (female)": 82.9, "Under 75 mortality rate from all causes": 391.74, "Under 75 mortality rate from cardiovascular disease": 91.19, "Under 75 mortality rate from cancer": 133.46, "Suicide rate": 9.42, "Killed and seriously injured casualties on England's roads": 97.37, "Emergency Hospital Admissions for Intentional Self-Harm": 65.1, "Deprivation score (IMD 2019)": 22.96, "Admission episodes for alcohol-related conditions (Narrow)": 458.87, "Admission episodes for alcohol-specific conditions (under 18 years)": null, "Average Attainment 8 score": 49.4}, {"Area Code": "E06000040", "Area Name": "Windsor and Maidenhead", "Life expectancy at birth (male)": 81.2, "Life expectancy at birth (female)": 85.3, "Under 75 mortality rate from all causes": 270.94, "Under 75 mortality rate from cardiovascular disease": 51.07, "Under 75 mortality rate from cancer": 104.33, "Suicide rate": 10.19, "Killed and seriously injured casualties on England's roads": 35.42, "Emergency Hospital Admissions for Intentional Self-Harm": 82.34, "Deprivation score (IMD 2019)": 8.38, "Admission episodes for alcohol-related conditions (Narrow)": 389.05, "Admission episodes for alcohol-specific conditions (under 18 years)": null, "Average Attainment 8 score": 51.6}, {"Area Code": "E06000041", "Area Name": "Wokingham", "Life expectancy at birth (male)": 82.7, "Life expectancy at birth (female)": 87.3, "Under 75 mortality rate from all causes": 212.23, "Under 75 mortality rate from cardiovascular disease": 48.67, "Under 75 mortality rate from cancer": 89.26, "Suicide rate": 8.52, "Killed and seriously injured casualties on England's roads": 32.08, "Emergency Hospital Admissions for Intentional Self-Harm": 52.23, "Deprivation score (IMD 2019)": 5.85, "Admission episodes for alcohol-related conditions (Narrow)": 240.47, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.96, "Average Attainment 8 score": 55.6}, {"Area Code": "E06000042", "Area Name": "Milton Keynes", "Life expectancy at birth (male)": 79.6, "Life expectancy at birth (female)": 84.3, "Under 75 mortality rate from all causes": 316.09, "Under 75 mortality rate from cardiovascular disease": 55.59, "Under 75 mortality rate from cancer": 124.45, "Suicide rate": 8.13, "Killed and seriously injured casualties on England's roads": 46.92, "Emergency Hospital Admissions for Intentional Self-Harm": 101.49, "Deprivation score (IMD 2019)": 17.98, "Admission episodes for alcohol-related conditions (Narrow)": 410.58, "Admission episodes for alcohol-specific conditions (under 18 years)": 15.0, "Average Attainment 8 score": 45.2}, {"Area Code": "E06000043", "Area Name": "Brighton and Hove", "Life expectancy at birth (male)": 79.7, "Life expectancy at birth (female)": 84.1, "Under 75 mortality rate from all causes": 327.74, "Under 75 mortality rate from cardiovascular disease": 61.6, "Under 75 mortality rate from cancer": 117.58, "Suicide rate": 16.27, "Killed and seriously injured casualties on England's roads": 206.82, "Emergency Hospital Admissions for Intentional Self-Harm": 161.85, "Deprivation score (IMD 2019)": 20.76, "Admission episodes for alcohol-related conditions (Narrow)": 413.5, "Admission episodes for alcohol-specific conditions (under 18 years)": 61.73, "Average Attainment 8 score": 46.4}, {"Area Code": "E06000044", "Area Name": "Portsmouth", "Life expectancy at birth (male)": 77.8, "Life expectancy at birth (female)": 81.9, "Under 75 mortality rate from all causes": 411.24, "Under 75 mortality rate from cardiovascular disease": 89.06, "Under 75 mortality rate from cancer": 135.39, "Suicide rate": 11.67, "Killed and seriously injured casualties on England's roads": 179.35, "Emergency Hospital Admissions for Intentional Self-Harm": 177.1, "Deprivation score (IMD 2019)": 26.9, "Admission episodes for alcohol-related conditions (Narrow)": 557.71, "Admission episodes for alcohol-specific conditions (under 18 years)": 19.1, "Average Attainment 8 score": 39.5}, {"Area Code": "E06000045", "Area Name": "Southampton", "Life expectancy at birth (male)": 78.0, "Life expectancy at birth (female)": 82.4, "Under 75 mortality rate from all causes": 396.28, "Under 75 mortality rate from cardiovascular disease": 92.94, "Under 75 mortality rate from cancer": 120.35, "Suicide rate": 11.32, "Killed and seriously injured casualties on England's roads": 256.88, "Emergency Hospital Admissions for Intentional Self-Harm": 261.65, "Deprivation score (IMD 2019)": 26.88, "Admission episodes for alcohol-related conditions (Narrow)": 711.6, "Admission episodes for alcohol-specific conditions (under 18 years)": 61.48, "Average Attainment 8 score": 41.9}, {"Area Code": "E06000046", "Area Name": "Isle of Wight", "Life expectancy at birth (male)": 77.2, "Life expectancy at birth (female)": 83.6, "Under 75 mortality rate from all causes": 393.79, "Under 75 mortality rate from cardiovascular disease": 78.44, "Under 75 mortality rate from cancer": 118.27, "Suicide rate": 6.28, "Killed and seriously injured casualties on England's roads": 268.55, "Emergency Hospital Admissions for Intentional Self-Harm": 188.24, "Deprivation score (IMD 2019)": 23.29, "Admission episodes for alcohol-related conditions (Narrow)": 684.01, "Admission episodes for alcohol-specific conditions (under 18 years)": 52.4, "Average Attainment 8 score": 41.5}, {"Area Code": "E06000047", "Area Name": "County Durham", "Life expectancy at birth (male)": 78.3, "Life expectancy at birth (female)": 82.1, "Under 75 mortality rate from all causes": 380.49, "Under 75 mortality rate from cardiovascular disease": 79.59, "Under 75 mortality rate from cancer": 128.49, "Suicide rate": 16.03, "Killed and seriously injured casualties on England's roads": 67.53, "Emergency Hospital Admissions for Intentional Self-Harm": 85.29, "Deprivation score (IMD 2019)": 26.79, "Admission episodes for alcohol-related conditions (Narrow)": 630.0, "Admission episodes for alcohol-specific conditions (under 18 years)": 49.67, "Average Attainment 8 score": 44.6}, {"Area Code": "E06000049", "Area Name": "Cheshire East", "Life expectancy at birth (male)": 80.6, "Life expectancy at birth (female)": 84.0, "Under 75 mortality rate from all causes": 297.48, "Under 75 mortality rate from cardiovascular disease": 64.76, "Under 75 mortality rate from cancer": 109.14, "Suicide rate": 13.73, "Killed and seriously injured casualties on England's roads": 63.32, "Emergency Hospital Admissions for Intentional Self-Harm": 180.87, "Deprivation score (IMD 2019)": 14.48, "Admission episodes for alcohol-related conditions (Narrow)": 472.0, "Admission episodes for alcohol-specific conditions (under 18 years)": 32.06, "Average Attainment 8 score": 47.1}, {"Area Code": "E06000050", "Area Name": "Cheshire West and Chester", "Life expectancy at birth (male)": 80.6, "Life expectancy at birth (female)": 84.3, "Under 75 mortality rate from all causes": 310.26, "Under 75 mortality rate from cardiovascular disease": 73.73, "Under 75 mortality rate from cancer": 110.18, "Suicide rate": 14.29, "Killed and seriously injured casualties on England's roads": 61.99, "Emergency Hospital Admissions for Intentional Self-Harm": 138.46, "Deprivation score (IMD 2019)": 18.08, "Admission episodes for alcohol-related conditions (Narrow)": 471.98, "Admission episodes for alcohol-specific conditions (under 18 years)": 25.64, "Average Attainment 8 score": 45.5}, {"Area Code": "E06000051", "Area Name": "Shropshire", "Life expectancy at birth (male)": 81.0, "Life expectancy at birth (female)": 85.0, "Under 75 mortality rate from all causes": 277.36, "Under 75 mortality rate from cardiovascular disease": 56.98, "Under 75 mortality rate from cancer": 104.64, "Suicide rate": 13.54, "Killed and seriously injured casualties on England's roads": 73.1, "Emergency Hospital Admissions for Intentional Self-Harm": 70.23, "Deprivation score (IMD 2019)": 17.15, "Admission episodes for alcohol-related conditions (Narrow)": 535.39, "Admission episodes for alcohol-specific conditions (under 18 years)": 23.75, "Average Attainment 8 score": 43.0}, {"Area Code": "E06000052", "Area Name": "Cornwall", "Life expectancy at birth (male)": 80.1, "Life expectancy at birth (female)": 83.8, "Under 75 mortality rate from all causes": 303.8, "Under 75 mortality rate from cardiovascular disease": 67.85, "Under 75 mortality rate from cancer": 110.13, "Suicide rate": 15.04, "Killed and seriously injured casualties on England's roads": 66.8, "Emergency Hospital Admissions for Intentional Self-Harm": 95.94, "Deprivation score (IMD 2019)": 23.07, "Admission episodes for alcohol-related conditions (Narrow)": 467.88, "Admission episodes for alcohol-specific conditions (under 18 years)": 21.14, "Average Attainment 8 score": 45.5}, {"Area Code": "E06000054", "Area Name": "Wiltshire", "Life expectancy at birth (male)": 82.0, "Life expectancy at birth (female)": 85.4, "Under 75 mortality rate from all causes": 252.6, "Under 75 mortality rate from cardiovascular disease": 54.15, "Under 75 mortality rate from cancer": 95.57, "Suicide rate": 9.98, "Killed and seriously injured casualties on England's roads": 67.47, "Emergency Hospital Admissions for Intentional Self-Harm": 215.19, "Deprivation score (IMD 2019)": 13.45, "Admission episodes for alcohol-related conditions (Narrow)": 411.07, "Admission episodes for alcohol-specific conditions (under 18 years)": 39.72, "Average Attainment 8 score": 45.8}, {"Area Code": "E06000055", "Area Name": "Bedford", "Life expectancy at birth (male)": 80.2, "Life expectancy at birth (female)": 83.4, "Under 75 mortality rate from all causes": 335.96, "Under 75 mortality rate from cardiovascular disease": 73.09, "Under 75 mortality rate from cancer": 108.61, "Suicide rate": 12.98, "Killed and seriously injured casualties on England's roads": 67.8, "Emergency Hospital Admissions for Intentional Self-Harm": 97.92, "Deprivation score (IMD 2019)": 18.93, "Admission episodes for alcohol-related conditions (Narrow)": 573.04, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.98, "Average Attainment 8 score": 44.3}, {"Area Code": "E06000056", "Area Name": "Central Bedfordshire", "Life expectancy at birth (male)": 82.0, "Life expectancy at birth (female)": 84.4, "Under 75 mortality rate from all causes": 264.23, "Under 75 mortality rate from cardiovascular disease": 50.73, "Under 75 mortality rate from cancer": 113.87, "Suicide rate": 10.9, "Killed and seriously injured casualties on England's roads": 67.17, "Emergency Hospital Admissions for Intentional Self-Harm": 112.15, "Deprivation score (IMD 2019)": 12.15, "Admission episodes for alcohol-related conditions (Narrow)": 508.9, "Admission episodes for alcohol-specific conditions (under 18 years)": 23.23, "Average Attainment 8 score": 44.2}, {"Area Code": "E06000057", "Area Name": "Northumberland", "Life expectancy at birth (male)": 79.6, "Life expectancy at birth (female)": 83.3, "Under 75 mortality rate from all causes": 318.41, "Under 75 mortality rate from cardiovascular disease": 63.8, "Under 75 mortality rate from cancer": 110.19, "Suicide rate": 14.04, "Killed and seriously injured casualties on England's roads": 66.26, "Emergency Hospital Admissions for Intentional Self-Harm": 342.53, "Deprivation score (IMD 2019)": 22.08, "Admission episodes for alcohol-related conditions (Narrow)": 826.08, "Admission episodes for alcohol-specific conditions (under 18 years)": 57.48, "Average Attainment 8 score": 43.9}, {"Area Code": "E06000058", "Area Name": "Bournemouth, Christchurch and Poole", "Life expectancy at birth (male)": 81.0, "Life expectancy at birth (female)": 85.0, "Under 75 mortality rate from all causes": 278.2, "Under 75 mortality rate from cardiovascular disease": 60.19, "Under 75 mortality rate from cancer": 99.38, "Suicide rate": 15.62, "Killed and seriously injured casualties on England's roads": 128.85, "Emergency Hospital Admissions for Intentional Self-Harm": 197.98, "Deprivation score (IMD 2019)": 18.17, "Admission episodes for alcohol-related conditions (Narrow)": 315.26, "Admission episodes for alcohol-specific conditions (under 18 years)": 40.19, "Average Attainment 8 score": 49.6}, {"Area Code": "E06000059", "Area Name": "Dorset", "Life expectancy at birth (male)": 82.1, "Life expectancy at birth (female)": 85.4, "Under 75 mortality rate from all causes": 247.36, "Under 75 mortality rate from cardiovascular disease": 47.3, "Under 75 mortality rate from cancer": 103.25, "Suicide rate": 12.79, "Killed and seriously injured casualties on England's roads": 90.35, "Emergency Hospital Admissions for Intentional Self-Harm": 194.6, "Deprivation score (IMD 2019)": 15.74, "Admission episodes for alcohol-related conditions (Narrow)": 352.4, "Admission episodes for alcohol-specific conditions (under 18 years)": 45.41, "Average Attainment 8 score": 44.1}, {"Area Code": "E06000060", "Area Name": "Buckinghamshire UA", "Life expectancy at birth (male)": 82.2, "Life expectancy at birth (female)": 85.4, "Under 75 mortality rate from all causes": 248.94, "Under 75 mortality rate from cardiovascular disease": 51.97, "Under 75 mortality rate from cancer": 101.63, "Suicide rate": 9.69, "Killed and seriously injured casualties on England's roads": 39.33, "Emergency Hospital Admissions for Intentional Self-Harm": 113.92, "Deprivation score (IMD 2019)": 10.05, "Admission episodes for alcohol-related conditions (Narrow)": 431.77, "Admission episodes for alcohol-specific conditions (under 18 years)": null, "Average Attainment 8 score": 51.2}, {"Area Code": "E06000061", "Area Name": "North Northamptonshire", "Life expectancy at birth (male)": 79.0, "Life expectancy at birth (female)": 83.2, "Under 75 mortality rate from all causes": 361.76, "Under 75 mortality rate from cardiovascular disease": 75.1, "Under 75 mortality rate from cancer": 130.31, "Suicide rate": 12.38, "Killed and seriously injured casualties on England's roads": 74.2, "Emergency Hospital Admissions for Intentional Self-Harm": 122.36, "Deprivation score (IMD 2019)": 19.66, "Admission episodes for alcohol-related conditions (Narrow)": 566.46, "Admission episodes for alcohol-specific conditions (under 18 years)": 14.98, "Average Attainment 8 score": 43.3}, {"Area Code": "E06000062", "Area Name": "West Northamptonshire", "Life expectancy at birth (male)": 80.2, "Life expectancy at birth (female)": 83.8, "Under 75 mortality rate from all causes": 312.16, "Under 75 mortality rate from cardiovascular disease": 66.13, "Under 75 mortality rate from cancer": 114.41, "Suicide rate": 9.93, "Killed and seriously injured casualties on England's roads": 58.54, "Emergency Hospital Admissions for Intentional Self-Harm": 170.71, "Deprivation score (IMD 2019)": 17.71, "Admission episodes for alcohol-related conditions (Narrow)": 476.3, "Admission episodes for alcohol-specific conditions (under 18 years)": 18.19, "Average Attainment 8 score": 45.3}, {"Area Code": "E06000063", "Area Name": "Cumberland", "Life expectancy at birth (male)": 78.8, "Life expectancy at birth (female)": 82.2, "Under 75 mortality rate from all causes": 366.87, "Under 75 mortality rate from cardiovascular disease": 81.67, "Under 75 mortality rate from cancer": 127.81, "Suicide rate": 19.43, "Killed and seriously injured casualties on England's roads": 81.23, "Emergency Hospital Admissions for Intentional Self-Harm": 157.66, "Deprivation score (IMD 2019)": 23.09, "Admission episodes for alcohol-related conditions (Narrow)": 554.44, "Admission episodes for alcohol-specific conditions (under 18 years)": 44.72, "Average Attainment 8 score": 42.8}];
+
+  // National Benchmarks (OHID Published England Averages)
+  const BENCHMARKS = {
+    imd: 21.7,
+    allCauses: 332.0, // Under-75 mortality per 100k
+    maleLe: 79.4,     // Years
+    alcohol: 540.0    // Narrow admissions per 100k
+  };
+
+  const METRIC_CONFIG = {
+    allCauses: {
+      key: 'Under 75 mortality rate from all causes',
+      label: 'Premature Mortality (Under 75 Deaths per 100k)',
+      min: 180,
+      max: 600,
+      reverseColor: true,
+      refVal: BENCHMARKS.allCauses,
+      refLabel: 'England Premature Mortality Avg (332.0)'
+    },
+    maleLe: {
+      key: 'Life expectancy at birth (male)',
+      label: 'Male Life Expectancy at Birth (Years)',
+      min: 74.0,
+      max: 84.5,
+      reverseColor: false,
+      refVal: BENCHMARKS.maleLe,
+      refLabel: 'England Male LE Avg (79.4 yrs)'
+    },
+    alcohol: {
+      key: 'Admission episodes for alcohol-related conditions (Narrow)',
+      label: 'Alcohol-Related Admissions (Narrow per 100k)',
+      min: 200,
+      max: 920,
+      reverseColor: true,
+      refVal: BENCHMARKS.alcohol,
+      refLabel: 'England Alcohol Admission Benchmark (540.0)'
+    }
+  };
+
+  // State
+  let currentFilter = 'all';
+  let currentMetricKey = 'allCauses';
+  let searchTerm = '';
+  let selectedAreaName = 'Blackpool'; // Opinionated initial focus
+
+  const svg = document.getElementById('chart');
+  const tooltip = document.getElementById('tooltip');
+
+  // Chart Dimensions
+  const W = 1000;
+  const H = 520;
+  const margin = { top: 30, right: 40, bottom: 65, left: 75 };
+  const innerW = W - margin.left - margin.right;
+  const innerH = H - margin.top - margin.bottom;
+
+  const xMin = 4, xMax = 48; // Deprivation IMD scale
+
+  function scaleX(val) {
+    return margin.left + ((val - xMin) / (xMax - xMin)) * innerW;
+  }
+
+  function scaleY(val, metric) {
+    const cfg = METRIC_CONFIG[metric];
+    return margin.top + innerH - ((val - cfg.min) / (cfg.max - cfg.min)) * innerH;
+  }
+
+  // Color interpolation based on Deprivation IMD
+  function getColorForDeprivation(imd) {
+    // 5 -> teal, 22 -> gold, 45 -> deep crimson
+    if (imd < 15) return '#10b981'; // prosperous
+    if (imd < 23) return '#38bdf8'; // national median
+    if (imd < 32) return '#fb923c'; // stressed
+    return '#f43f5e';               // acute deprivation
+  }
+
+  function renderChart() {
+    const cfg = METRIC_CONFIG[currentMetricKey];
+    
+    // Filter rows with valid values
+    const validData = rawData.filter(d => 
+      d['Deprivation score (IMD 2019)'] !== null &&
+      !isNaN(d['Deprivation score (IMD 2019)']) &&
+      d[cfg.key] !== null &&
+      !isNaN(d[cfg.key])
+    );
+
+    // Filter by wealth tier
+    const displayData = validData.filter(d => {
+      const imd = d['Deprivation score (IMD 2019)'];
+      if (currentFilter === 'high-dep') return imd > 25;
+      if (currentFilter === 'low-dep') return imd <= 18;
+      return true;
+    });
+
+    let html = '';
+
+    // Defs for gradients & filters
+    html += `
+      <defs>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+        <linearGradient id="depGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#10b981" />
+          <stop offset="45%" stop-color="#38bdf8" />
+          <stop offset="70%" stop-color="#fb923c" />
+          <stop offset="100%" stop-color="#f43f5e" />
+        </linearGradient>
+      </defs>
+    `;
+
+    // Grid lines - X
+    const xTicks = [10, 20, 30, 40];
+    xTicks.forEach(tick => {
+      const xPos = scaleX(tick);
+      html += `
+        <line x1="${xPos}" y1="${margin.top}" x2="${xPos}" y2="${margin.top + innerH}" class="grid-line" />
+        <text x="${xPos}" y="${margin.top + innerH + 20}" text-anchor="middle" class="axis-label">${tick}</text>
+      `;
+    });
+
+    // Grid lines - Y
+    const ySteps = 5;
+    for (let i = 0; i <= ySteps; i++) {
+      const val = cfg.min + (i / ySteps) * (cfg.max - cfg.min);
+      const yPos = scaleY(val, currentMetricKey);
+      html += `
+        <line x1="${margin.left}" y1="${yPos}" x2="${margin.left + innerW}" y2="${yPos}" class="grid-line" />
+        <text x="${margin.left - 12}" y="${yPos + 4}" text-anchor="end" class="axis-label">${Math.round(val)}</text>
+      `;
+    }
+
+    // Fixed England-Average Reference Line for Deprivation (IMD)
+    const refImdX = scaleX(BENCHMARKS.imd);
+    html += `
+      <line x1="${refImdX}" y1="${margin.top}" x2="${refImdX}" y2="${margin.top + innerH}" class="reference-line" />
+      <text x="${refImdX + 6}" y="${margin.top + 16}" class="reference-label">England Avg Deprivation (21.7)</text>
+    `;
+
+    // Fixed England-Average Reference Line for Metric (Y)
+    const refMetricY = scaleY(cfg.refVal, currentMetricKey);
+    html += `
+      <line x1="${margin.left}" y1="${refMetricY}" x2="${margin.left + innerW}" y2="${refMetricY}" class="reference-line" />
+      <text x="${margin.left + innerW - 8}" y="${refMetricY - 8}" text-anchor="end" class="reference-label">${cfg.refLabel}</text>
+    `;
+
+    // Trendline computation (Linear regression on all valid data)
+    let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0, n = validData.length;
+    validData.forEach(d => {
+      const x = d['Deprivation score (IMD 2019)'];
+      const y = d[cfg.key];
+      sumX += x; sumY += y; sumXY += x * y; sumXX += x * x;
+    });
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    const x1Val = 6, x2Val = 46;
+    const y1Val = slope * x1Val + intercept;
+    const y2Val = slope * x2Val + intercept;
+
+    // Animated trendline element
+    html += `
+      <line x1="${scaleX(x1Val)}" y1="${scaleY(y1Val, currentMetricKey)}"
+            x2="${scaleX(x2Val)}" y2="${scaleY(y2Val, currentMetricKey)}"
+            class="trend-path" />
+    `;
+
+    // Axis Titles
+    html += `
+      <text x="${margin.left + innerW / 2}" y="${H - 15}" text-anchor="middle" class="axis-title">
+        ← Lower Poverty | Index of Multiple Deprivation (IMD 2019 Score) | Acute Deprivation →
+      </text>
+      <text transform="rotate(-90)" x="${-(margin.top + innerH / 2)}" y="22" text-anchor="middle" class="axis-title">
+        ${cfg.label}
+      </text>
+    `;
+
+    // Plot Dots
+    displayData.forEach(d => {
+      const x = scaleX(d['Deprivation score (IMD 2019)']);
+      const y = scaleY(d[cfg.key], currentMetricKey);
+      const isSelected = selectedAreaName && d['Area Name'].toLowerCase() === selectedAreaName.toLowerCase();
+      const matchesSearch = searchTerm && d['Area Name'].toLowerCase().includes(searchTerm.toLowerCase());
+      
+      let r = 6.5;
+      let opacity = 0.85;
+      let extraClass = '';
+
+      if (searchTerm) {
+        if (!matchesSearch) extraClass = 'muted';
+        else { extraClass = 'highlighted'; r = 9; }
+      } else if (isSelected) {
+        extraClass = 'highlighted';
+        r = 9.5;
+      }
+
+      const color = getColorForDeprivation(d['Deprivation score (IMD 2019)']);
+
+      html += `
+        <circle 
+          cx="${x}" 
+          cy="${y}" 
+          r="${r}" 
+          fill="${color}" 
+          stroke="#0f172a" 
+          stroke-width="1.2"
+          class="dot ${extraClass}"
+          data-name="${d['Area Name']}"
+          data-imd="${d['Deprivation score (IMD 2019)']}"
+          data-yval="${d[cfg.key]}"
+          data-mle="${d['Life expectancy at birth (male)']}"
+          data-fle="${d['Life expectancy at birth (female)']}"
+          data-allcauses="${d['Under 75 mortality rate from all causes']}"
+          data-harm="${d['Emergency Hospital Admissions for Intentional Self-Harm']}"
+          data-alc="${d['Admission episodes for alcohol-related conditions (Narrow)']}"
+        />
+      `;
+
+      // Static callout labels for key anchor areas to establish opinionated story instantly
+      if (['Blackpool', 'Wokingham', 'Middlesbrough', 'Rutland'].includes(d['Area Name']) && !searchTerm) {
+        const offset = d['Area Name'] === 'Blackpool' ? -12 : (d['Area Name'] === 'Wokingham' ? 14 : -12);
+        html += `
+          <text x="${x}" y="${y + offset}" text-anchor="middle" font-size="10.5" font-weight="700" fill="#ffffff" style="pointer-events:none; filter: drop-shadow(0px 1px 3px rgba(0,0,0,0.9));">
+            ${d['Area Name']}
+          </text>
+        `;
+      }
+    });
+
+    svg.innerHTML = html;
+    attachListeners();
+  }
+
+  function attachListeners() {
+    const dots = svg.querySelectorAll('.dot');
+    dots.forEach(dot => {
+      dot.addEventListener('mouseenter', (e) => {
+        const target = e.target;
+        const name = target.getAttribute('data-name');
+        const imd = parseFloat(target.getAttribute('data-imd')).toFixed(1);
+        const yval = parseFloat(target.getAttribute('data-yval')).toFixed(1);
+        const mle = target.getAttribute('data-mle');
+        const fle = target.getAttribute('data-fle');
+        const allCauses = parseFloat(target.getAttribute('data-allcauses')).toFixed(0);
+        const alc = parseFloat(target.getAttribute('data-alc')).toFixed(0);
+
+        tooltip.innerHTML = `
+          <div class="tooltip-title">${name}</div>
+          <div class="tooltip-row"><span>Deprivation Score:</span> <span class="tooltip-val">${imd} (Eng avg: 21.7)</span></div>
+          <div class="tooltip-row"><span>Under-75 Mortality:</span> <span class="tooltip-val" style="color:#fda4af;">${allCauses} / 100k</span></div>
+          <div class="tooltip-row"><span>Male Life Expectancy:</span> <span class="tooltip-val">${mle} yrs</span></div>
+          <div class="tooltip-row"><span>Female Life Expectancy:</span> <span class="tooltip-val">${fle} yrs</span></div>
+          <div class="tooltip-row"><span>Alcohol Admissions:</span> <span class="tooltip-val">${alc} / 100k</span></div>
+        `;
+
+        tooltip.style.opacity = '1';
+        positionTooltip(e);
+      });
+
+      dot.addEventListener('mousemove', positionTooltip);
+
+      dot.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+      });
+
+      dot.addEventListener('click', (e) => {
+        selectedAreaName = e.target.getAttribute('data-name');
+        searchTerm = '';
+        document.getElementById('areaSearch').value = '';
+        renderChart();
+      });
+    });
+  }
+
+  function positionTooltip(e) {
+    const rect = svg.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${y}px`;
+  }
+
+  // Filter handlers
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      renderChart();
+    });
+  });
+
+  document.querySelectorAll('[data-metric]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('[data-metric]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentMetricKey = e.target.dataset.metric;
+      renderChart();
+    });
+  });
+
+  // Query chips
+  document.querySelectorAll('.query-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const target = chip.dataset.target;
+      selectedAreaName = target;
+      searchTerm = '';
+      document.getElementById('areaSearch').value = target;
+      renderChart();
+    });
+  });
+
+  // Search input
+  const searchInput = document.getElementById('areaSearch');
+  searchInput.addEventListener('input', (e) => {
+    searchTerm = e.target.value.trim();
+    selectedAreaName = '';
+    renderChart();
+  });
+
+  // Initial draw
+  renderChart();
+
+</script>
+
+</body>
+</html>

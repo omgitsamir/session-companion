@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Great British Housing Squeeze — ONS Family Spending</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --card-border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #f0883e;
+    --accent-glow: rgba(240, 136, 62, 0.15);
+    --blue: #58a6ff;
+    --teal: #39d353;
+    --pink: #f778ba;
+    --purple: #bc8cff;
+    --danger: #ff7b72;
+    --font-serif: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", Georgia, serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    padding: 24px 16px 60px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+
+  /* Editorial Masthead */
+  .masthead {
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+  }
+  .tagline {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #ffffff;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  h1 span.highlight {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 6px;
+  }
+  .deck {
+    font-size: 1.05rem;
+    color: #c9d1d9;
+    max-width: 860px;
+    line-height: 1.55;
+  }
+
+  /* Stat strip */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--card-border);
+  }
+  .stat-card.alert::before { background: var(--accent); }
+  .stat-card.cyan::before { background: var(--blue); }
+  .stat-card.green::before { background: var(--purple); }
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 6px;
+  }
+  .stat-val {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: var(--font-serif);
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .stat-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* Control bar */
+  .control-bar {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .control-title {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+  .btn-pill-group {
+    display: inline-flex;
+    background: #0d1117;
+    border-radius: 6px;
+    padding: 2px;
+    border: 1px solid var(--card-border);
+  }
+  .btn-pill {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.18s ease;
+  }
+  .btn-pill:hover {
+    color: #fff;
+  }
+  .btn-pill.active {
+    background: var(--accent);
+    color: #000;
+  }
+
+  select {
+    background: #0d1117;
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+  }
+  select:focus {
+    border-color: var(--accent);
+  }
+
+  /* Visualisation Layout */
+  .vis-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+  }
+  @media (max-width: 960px) {
+    .vis-layout { grid-template-columns: 1fr; }
+  }
+
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px 20px 14px 20px;
+    position: relative;
+  }
+  .chart-header {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .chart-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: #fff;
+  }
+  .chart-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  #main-svg-wrapper {
+    width: 100%;
+    min-height: 480px;
+    overflow-x: auto;
+  }
+  svg {
+    display: block;
+    user-select: none;
+  }
+
+  /* Sidebar Spotlight Card */
+  .spotlight-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .spotlight-header {
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 12px;
+  }
+  .spotlight-region-name {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 700;
+  }
+  .spotlight-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(88, 166, 255, 0.15);
+    color: var(--blue);
+    margin-top: 4px;
+  }
+  .spotlight-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .spotlight-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.85rem;
+  }
+  .spotlight-metric-row span:first-child {
+    color: var(--text-muted);
+  }
+  .spotlight-metric-row span:last-child {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .insight-box {
+    background: #0d1117;
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: #c9d1d9;
+    line-height: 1.45;
+  }
+  .insight-box strong {
+    color: #fff;
+  }
+
+  /* Micro bar inside spotlight */
+  .cat-mini-list {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cat-mini-item {
+    font-size: 0.76rem;
+  }
+  .cat-mini-label {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .cat-mini-bar-bg {
+    background: #21262d;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .cat-mini-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    background: #1f242c;
+    border: 1px solid #484f58;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transition: opacity 0.1s ease;
+    line-height: 1.4;
+    max-width: 260px;
+  }
+  #tooltip .tip-title {
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+  }
+  #tooltip .tip-val {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  /* Footnote */
+  .footer-notes {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid var(--card-border);
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="tagline">ONS Family Spending · FYE 2023–2025 · 3-Year Averages</div>
+    <h1>The Cost of Living Where You Live: <span class="highlight">The Great London Squeeze</span></h1>
+    <p class="deck">
+      While the UK median household allocates <strong>£112.50 per week</strong> to shelter & power, Londoners surrender a staggering <strong>£182.20/week</strong> (26.2% of all outgoings) — crowding out discretionary joy and leaving the capital dead-last in England on cultural and recreational spending.
+    </p>
+  </header>
+
+  <!-- KEY STAT STRIP -->
+  <div class="stat-grid">
+    <div class="stat-card alert">
+      <div class="stat-label">Housing Burden Gap</div>
+      <div class="stat-val">+£100.10<span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/wk</span></div>
+      <div class="stat-desc">London (£182.20) vs North East (£82.10) — a +122% penalty for the same calendar week.</div>
+    </div>
+    <div class="stat-card cyan">
+      <div class="stat-label">The Leisure Trade-off</div>
+      <div class="stat-val">£55.60 vs £93.30</div>
+      <div class="stat-desc">London spends £37.70 <em>less</em> weekly on Recreation & Culture than the neighbouring South East.</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Total Outgoings Divergence</div>
+      <div class="stat-val">£218.70<span style="font-size:1rem; font-weight:normal; color:var(--text-muted);">/wk</span></div>
+      <div class="stat-desc">Weekly budget gulf between South East (£724.20) and North East (£505.50).</div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE CONTROLS -->
+  <div class="control-bar">
+    <div class="control-group">
+      <span class="control-title">Story View:</span>
+      <div class="btn-pill-group" role="tablist">
+        <button class="btn-pill active" id="btn-mode-housing" onclick="setMode('housing')">The Shelter Squeeze</button>
+        <button class="btn-pill" id="btn-mode-recreation" onclick="setMode('recreation')">Recreation Paradox</button>
+        <button class="btn-pill" id="btn-mode-all" onclick="setMode('all')">Total Weekly Outgoings</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <span class="control-title">Inspect Region:</span>
+      <select id="region-select" onchange="onSelectRegion(this.value)">
+        <!-- Options populated dynamically -->
+      </select>
+    </div>
+
+    <div class="control-group">
+      <span class="control-title">Metric:</span>
+      <div class="btn-pill-group">
+        <button class="btn-pill active" id="btn-metric-abs" onclick="setMetric('abs')">£ / Week</button>
+        <button class="btn-pill" id="btn-metric-pct" onclick="setMetric('pct')">% of Budget</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN VISUALIZATION ROW -->
+  <div class="vis-layout">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title" id="chart-title">Housing (net), Fuel & Power by Region</h2>
+          <p class="chart-subtitle" id="chart-sub">Dashed line indicates UK Average benchmark (£112.50/week). Click any bar to spotlight.</p>
+        </div>
+      </div>
+      <div id="main-svg-wrapper">
+        <!-- SVG rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- SPOTLIGHT DETAIL SIDEBAR -->
+    <div class="spotlight-card" id="spotlight-panel">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer-notes">
+    <div>Source: Office for National Statistics (ONS) Family Spending, Table A33 (FYE2023–FYE2025 3-year pool).</div>
+    <div>*Housing net includes rent, mortgage interest, local council tax & domestic energy bills.</div>
+  </footer>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// --- RAW EMBEDDED DATA FROM ONS TABLE A33 ---
+const rawData = [
+  {"Category": "1 Food & non-alcoholic drinks", "United Kingdom": 69.2, "England": 69.5, "North East": 60.5, "North West": 66.4, "Yorkshire and The Humber": 66.0, "East Midlands": 69.3, "West Midlands": 66.4, "East": 74.2, "London": 68.7, "South East": 74.4, "South West": 73.0, "Wales": 66.1, "Scotland": 64.8, "Northern Ireland": 80.9},
+  {"Category": "2 Alcoholic drinks, tobacco & narcotics", "United Kingdom": 11.1, "England": 10.8, "North East": 9.2, "North West": 10.5, "Yorkshire and The Humber": 11.1, "East Midlands": 11.1, "West Midlands": 10.6, "East": 11.8, "London": 8.4, "South East": 12.0, "South West": 12.6, "Wales": 13.5, "Scotland": 10.7, "Northern Ireland": 14.3},
+  {"Category": "3 Clothing & footwear", "United Kingdom": 17.4, "England": 17.6, "North East": 17.5, "North West": 17.3, "Yorkshire and The Humber": 16.3, "East Midlands": 17.0, "West Midlands": 15.5, "East": 20.5, "London": 20.1, "South East": 15.4, "South West": 18.7, "Wales": 16.1, "Scotland": 13.7, "Northern Ireland": 25.5},
+  {"Category": "4 Housing(net)¹, fuel & power", "United Kingdom": 112.5, "England": 117.1, "North East": 82.1, "North West": 95.0, "Yorkshire and The Humber": 97.4, "East Midlands": 103.0, "West Midlands": 98.5, "East": 112.5, "London": 182.2, "South East": 122.4, "South West": 111.9, "Wales": 94.3, "Scotland": 90.0, "Northern Ireland": 76.7},
+  {"Category": "5 Household goods & services", "United Kingdom": 38.3, "England": 39.4, "North East": 35.1, "North West": 38.7, "Yorkshire and The Humber": 40.5, "East Midlands": 34.9, "West Midlands": 31.5, "East": 46.2, "London": 37.8, "South East": 40.0, "South West": 46.4, "Wales": 34.3, "Scotland": 30.0, "Northern Ireland": 38.7},
+  {"Category": "6 Health", "United Kingdom": 9.4, "England": 9.7, "North East": 5.3, "North West": 7.5, "Yorkshire and The Humber": 8.6, "East Midlands": 7.7, "West Midlands": 9.3, "East": 10.5, "London": 10.6, "South East": 12.7, "South West": 11.3, "Wales": 9.3, "Scotland": 6.4, "Northern Ireland": 10.4},
+  {"Category": "7 Transport", "United Kingdom": 88.0, "England": 88.9, "North East": 69.0, "North West": 72.8, "Yorkshire and The Humber": 82.8, "East Midlands": 88.5, "West Midlands": 89.1, "East": 107.3, "London": 71.4, "South East": 110.3, "South West": 98.3, "Wales": 84.7, "Scotland": 78.7, "Northern Ireland": 94.0},
+  {"Category": "8 Communication", "United Kingdom": 21.6, "England": 21.8, "North East": 20.0, "North West": 21.5, "Yorkshire and The Humber": 21.0, "East Midlands": 21.1, "West Midlands": 21.4, "East": 23.6, "London": 21.2, "South East": 22.8, "South West": 22.0, "Wales": 20.7, "Scotland": 21.1, "Northern Ireland": 21.3},
+  {"Category": "9 Recreation & culture", "United Kingdom": 73.4, "England": 73.9, "North East": 64.0, "North West": 68.8, "Yorkshire and The Humber": 71.0, "East Midlands": 64.9, "West Midlands": 74.2, "East": 84.4, "London": 55.6, "South East": 93.3, "South West": 80.1, "Wales": 78.9, "Scotland": 70.2, "Northern Ireland": 60.6},
+  {"Category": "10 Education", "United Kingdom": 6.3, "England": 7.1, "North East": 3.9, "North West": 3.5, "Yorkshire and The Humber": 3.8, "East Midlands": 3.0, "West Midlands": 4.7, "East": 7.2, "London": 12.9, "South East": 11.0, "South West": 7.1, "Wales": 2.2, "Scotland": 2.5, "Northern Ireland": 3.1},
+  {"Category": "11 Restaurants & hotels", "United Kingdom": 44.7, "England": 46.1, "North East": 35.9, "North West": 39.9, "Yorkshire and The Humber": 44.2, "East Midlands": 36.8, "West Midlands": 38.3, "East": 48.0, "London": 54.0, "South East": 52.2, "South West": 52.7, "Wales": 42.1, "Scotland": 33.3, "Northern Ireland": 44.4},
+  {"Category": "12 Miscellaneous goods & services", "United Kingdom": 45.2, "England": 46.6, "North East": 36.6, "North West": 42.0, "Yorkshire and The Humber": 43.2, "East Midlands": 41.0, "West Midlands": 42.4, "East": 54.4, "London": 47.6, "South East": 51.9, "South West": 51.2, "Wales": 39.3, "Scotland": 35.3, "Northern Ireland": 47.8},
+  {"Category": "Total expenditure", "United Kingdom": 622.6, "England": 636.7, "North East": 505.5, "North West": 554.7, "Yorkshire and The Humber": 580.1, "East Midlands": 572.9, "West Midlands": 581.5, "East": 698.4, "London": 695.9, "South East": 724.2, "South West": 677.9, "Wales": 574.0, "Scotland": 528.0, "Northern Ireland": 583.8},
+  {"Category": "Total expenditure per person", "United Kingdom": 268.1, "England": 271.6, "North East": 228.9, "North West": 243.0, "Yorkshire and The Humber": 252.7, "East Midlands": 240.3, "West Midlands": 241.7, "East": 297.5, "London": 288.2, "South East": 305.3, "South West": 295.7, "Wales": 254.6, "Scotland": 250.8, "Northern Ireland": 239.0}
+];
+
+// Target regions (excluding UK and England macro-aggregates from bar lists, but keeping UK as benchmark)
+const regions = [
+  "North East", "North West", "Yorkshire and The Humber", 
+  "East Midlands", "West Midlands", "East", "London", 
+  "South East", "South West", "Wales", "Scotland", "Northern Ireland"
+];
+
+// State
+let currentMode = 'housing'; // 'housing' | 'recreation' | 'all'
+let currentMetric = 'abs';    // 'abs' (£/wk) | 'pct' (% of total expenditure)
+let selectedRegion = 'London';
+
+// Helper maps
+const rowHousing = rawData.find(d => d.Category.includes("Housing"));
+const rowRecreation = rawData.find(d => d.Category.includes("Recreation"));
+const rowTotal = rawData.find(d => d.Category === "Total expenditure");
+const rowFood = rawData.find(d => d.Category.includes("Food"));
+const rowDining = rawData.find(d => d.Category.includes("Restaurants"));
+const rowTransport = rawData.find(d => d.Category.includes("Transport"));
+const rowPerPerson = rawData.find(d => d.Category.includes("per person"));
+
+// Populate Region dropdown
+const regionSelect = document.getElementById("region-select");
+regions.forEach(r => {
+  const opt = document.createElement("option");
+  opt.value = r;
+  opt.textContent = r;
+  if (r === selectedRegion) opt.selected = true;
+  regionSelect.appendChild(opt);
+});
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('[id^="btn-mode-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-mode-${mode}`).classList.add('active');
+  renderChart();
+  renderSpotlight();
+}
+
+function setMetric(metric) {
+  currentMetric = metric;
+  document.querySelectorAll('[id^="btn-metric-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-metric-${metric}`).classList.add('active');
+  renderChart();
+  renderSpotlight();
+}
+
+function onSelectRegion(reg) {
+  selectedRegion = reg;
+  renderChart();
+  renderSpotlight();
+}
+
+// Compute active row and values
+function getActiveData() {
+  let catRow;
+  let title;
+  let subtitle;
+  let colorTheme;
+
+  if (currentMode === 'housing') {
+    catRow = rowHousing;
+    title = currentMetric === 'abs' ? "Housing, Fuel & Power: Weekly Spend by Region (£)" : "Housing & Power: Share of Total Household Outgoings (%)";
+    subtitle = currentMetric === 'abs'
+      ? `UK National Average: £${catRow["United Kingdom"].toFixed(1)}/wk. Notice London's extreme £182.20 spike.`
+      : `UK Average: ${((catRow["United Kingdom"] / rowTotal["United Kingdom"]) * 100).toFixed(1)}% of all spending. London allocates over a quarter of every pound.`;
+    colorTheme = 'orange';
+  } else if (currentMode === 'recreation') {
+    catRow = rowRecreation;
+    title = currentMetric === 'abs' ? "Recreation & Culture: Weekly Outgoings (£)" : "Recreation & Culture: Share of Budget (%)";
+    subtitle = currentMetric === 'abs'
+      ? `UK Average: £${catRow["United Kingdom"].toFixed(1)}/wk. Londoners spend £37.70 less weekly than the South East.`
+      : `UK Average: ${((catRow["United Kingdom"] / rowTotal["United Kingdom"]) * 100).toFixed(1)}% of spending goes to culture & leisure.`;
+    colorTheme = 'purple';
+  } else {
+    catRow = rowTotal;
+    title = "Total Weekly Household Expenditure (£)";
+    subtitle = `UK National Average: £${catRow["United Kingdom"].toFixed(1)}/wk. Ranging from £505.50 (North East) to £724.20 (South East).`;
+    colorTheme = 'blue';
+  }
+
+  // Build array of items
+  const items = regions.map(reg => {
+    const rawVal = catRow[reg];
+    const totalVal = rowTotal[reg];
+    const val = currentMetric === 'pct' ? (rawVal / totalVal) * 100 : rawVal;
+    return {
+      region: reg,
+      val: val,
+      rawVal: rawVal,
+      totalVal: totalVal,
+      isCapital: reg === "London"
+    };
+  });
+
+  // Sort descending
+  items.sort((a, b) => b.val - a.val);
+
+  const ukRaw = catRow["United Kingdom"];
+  const ukBenchmark = currentMetric === 'pct' ? (ukRaw / rowTotal["United Kingdom"]) * 100 : ukRaw;
+
+  return { items, title, subtitle, ukBenchmark, colorTheme };
+}
+
+// Render Main SVG Bar Chart
+function renderChart() {
+  const { items, title, subtitle, ukBenchmark, colorTheme } = getActiveData();
+
+  document.getElementById("chart-title").textContent = title;
+  document.getElementById("chart-sub").textContent = subtitle;
+
+  const wrapper = document.getElementById("main-svg-wrapper");
+  const width = Math.max(680, wrapper.clientWidth || 700);
+  const height = 480;
+  const margin = { top: 30, right: 70, bottom: 40, left: 165 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+
+  const maxVal = Math.max(...items.map(d => d.val), ukBenchmark) * 1.08;
+  const barHeight = innerH / items.length;
+
+  let barsSvg = "";
+
+  items.forEach((d, i) => {
+    const y = i * barHeight;
+    const barW = (d.val / maxVal) * innerW;
+    const isSelected = d.region === selectedRegion;
+    const isLondon = d.region === "London";
+
+    let barColor;
+    if (isSelected) {
+      barColor = "var(--accent)";
+    } else if (isLondon) {
+      barColor = currentMode === 'housing' ? "#ff7b72" : "#a371f7";
+    } else {
+      barColor = "#30363d";
+    }
+
+    // Label formatting
+    const valText = currentMetric === 'pct' 
+      ? `${d.val.toFixed(1)}%`
+      : `£${d.val.toFixed(1)}`;
+
+    // Divergence label compared to UK benchmark
+    const diff = d.val - ukBenchmark;
+    const diffText = (diff >= 0 ? `+` : ``) + (currentMetric === 'pct' ? `${diff.toFixed(1)}%` : `£${diff.toFixed(1)}`);
+
+    barsSvg += `
+      <g class="bar-row" data-region="${d.region}" style="cursor:pointer;" onclick="onSelectRegion('${d.region}')"
+         onmouseenter="showTip(event, '${d.region}', ${d.val}, ${d.rawVal}, ${d.totalVal})"
+         onmousemove="moveTip(event)"
+         onmouseleave="hideTip()">
+        <!-- Background hover track -->
+        <rect x="0" y="${y + 2}" width="${innerW + 60}" height="${barHeight - 4}" fill="${isSelected ? 'rgba(240,136,62,0.08)' : 'transparent'}" rx="4" />
+        
+        <!-- Region Y-axis label -->
+        <text x="-12" y="${y + barHeight/2 + 4}" text-anchor="end" 
+              fill="${isSelected ? '#fff' : (isLondon ? '#ff9e64' : '#8b949e')}"
+              font-weight="${isSelected || isLondon ? '700' : '500'}"
+              font-size="12" font-family="var(--font-sans)">
+          ${d.region} ${isLondon ? '★' : ''}
+        </text>
+
+        <!-- Bar rectangle -->
+        <rect x="0" y="${y + 5}" width="${barW}" height="${barHeight - 10}" 
+              fill="${barColor}" rx="4" 
+              style="transition: width 0.4s ease, fill 0.2s;" />
+
+        <!-- Value label at end of bar -->
+        <text x="${barW + 8}" y="${y + barHeight/2 + 4}" 
+              fill="${isSelected ? 'var(--accent)' : '#c9d1d9'}"
+              font-weight="${isSelected ? '700' : '600'}"
+              font-family="var(--font-mono)" font-size="11.5">
+          ${valText}
+        </text>
+      </g>
+    `;
+  });
+
+  // UK Benchmark vertical line
+  const benchmarkX = (ukBenchmark / maxVal) * innerW;
+  const benchmarkSvg = `
+    <g class="benchmark-line">
+      <line x1="${benchmarkX}" y1="0" x2="${benchmarkX}" y2="${innerH}" 
+            stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.8" />
+      <text x="${benchmarkX}" y="-10" text-anchor="middle" fill="#58a6ff" font-family="var(--font-mono)" font-size="10.5" font-weight="600">
+        UK Avg: ${currentMetric === 'pct' ? ukBenchmark.toFixed(1) + '%' : '£' + ukBenchmark.toFixed(1)}
+      </text>
+    </g>
+  `;
+
+  // X Axis Grid Lines
+  const xTicks = 4;
+  let gridSvg = "";
+  for (let i = 0; i <= xTicks; i++) {
+    const tickVal = (maxVal / xTicks) * i;
+    const x = (tickVal / maxVal) * innerW;
+    const tickLabel = currentMetric === 'pct' ? `${tickVal.toFixed(0)}%` : `£${tickVal.toFixed(0)}`;
+    gridSvg += `
+      <line x1="${x}" y1="0" x2="${x}" y2="${innerH}" stroke="#21262d" stroke-width="1" />
+      <text x="${x}" y="${innerH + 20}" text-anchor="middle" fill="#6e7681" font-size="10" font-family="var(--font-mono)">${tickLabel}</text>
+    `;
+  }
+
+  wrapper.innerHTML = `
+    <svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}">
+      <g transform="translate(${margin.left}, ${margin.top})">
+        ${gridSvg}
+        ${benchmarkSvg}
+        ${barsSvg}
+      </g>
+    </svg>
+  `;
+}
+
+// Render Spotlight Sidebar
+function renderSpotlight() {
+  const reg = selectedRegion;
+  const panel = document.getElementById("spotlight-panel");
+
+  const total = rowTotal[reg];
+  const perPerson = rowPerPerson[reg];
+  const housing = rowHousing[reg];
+  const food = rowFood[reg];
+  const transport = rowTransport[reg];
+  const rec = rowRecreation[reg];
+  const dining = rowDining[reg];
+
+  const housingPct = ((housing / total) * 100).toFixed(1);
+  const recPct = ((rec / total) * 100).toFixed(1);
+  const transPct = ((transport / total) * 100).toFixed(1);
+
+  // Compute story insights specifically tailored for the selected region
+  let editorialNarrative = "";
+  if (reg === "London") {
+    editorialNarrative = `<strong>The Housing Squeeze Epicenter:</strong> Housing alone consumes <strong>£182.20/wk</strong> (26.2% of total spend). To afford rent and mortgages, Londoners curb recreational spend to just <strong>£55.60/wk</strong>—the lowest discretionary leisure allocation anywhere in Great Britain.`;
+  } else if (reg === "North East") {
+    editorialNarrative = `<strong>Lowest Overall Living Cost:</strong> At <strong>£505.50/week</strong> total spending, North East households operate on £190/wk less budget than London. Housing takes just <strong>£82.10/wk</strong> (16.2%), leaving relatively more slack for essentials, though incomes reflect lower totals.`;
+  } else if (reg === "South East") {
+    editorialNarrative = `<strong>The UK's Highest Spending Outpost:</strong> Averaging <strong>£724.20/wk</strong>, the South East outspends even London. Unlike the capital, their high budget fuels the highest recreation spend in Britain (<strong>£93.30/wk</strong>) and massive transport costs (<strong>£110.30/wk</strong>).`;
+  } else if (reg === "Northern Ireland") {
+    editorialNarrative = `<strong>The Food & Shelter Inversion:</strong> Northern Ireland spends the lowest on housing in the dataset (<strong>£76.70/wk</strong>), but posts the nation's highest food bill (<strong>£80.90/wk</strong>)—spending more on groceries than housing itself.`;
+  } else if (reg === "Wales") {
+    editorialNarrative = `<strong>Cultural Balance:</strong> Despite lower total weekly outgoings (<strong>£574.00/wk</strong>), Welsh households allocate <strong>£78.90/wk</strong> (13.7%) to recreation and culture—substantially outspending Londoners in absolute pounds.`;
+  } else {
+    editorialNarrative = `Housing accounts for <strong>£${housing.toFixed(1)}/wk</strong> (${housingPct}% of total outgoings), while leisure activities claim <strong>£${rec.toFixed(1)}/wk</strong>. Total household outlay is <strong>£${total.toFixed(1)}/wk</strong> (£${perPerson.toFixed(1)} per person).`;
+  }
+
+  // Benchmark difference calculation
+  const ukHousing = rowHousing["United Kingdom"];
+  const housingDiff = housing - ukHousing;
+  const housingDiffStr = (housingDiff >= 0 ? `+£` : `-£`) + Math.abs(housingDiff).toFixed(1);
+
+  panel.innerHTML = `
+    <div class="spotlight-header">
+      <div style="font-size:0.7rem; font-family:var(--font-mono); text-transform:uppercase; color:var(--text-muted); letter-spacing:0.08em;">Region Profile</div>
+      <div class="spotlight-region-name">${reg}</div>
+      <div class="spotlight-badge">${housingDiff >= 0 ? `${housingDiffStr}/wk vs UK avg housing` : `${housingDiffStr}/wk below UK avg`}</div>
+    </div>
+
+    <div class="spotlight-metrics">
+      <div class="spotlight-metric-row">
+        <span>Total Weekly Outgoings</span>
+        <span>£${total.toFixed(1)}</span>
+      </div>
+      <div class="spotlight-metric-row">
+        <span>Expenditure Per Person</span>
+        <span>£${perPerson.toFixed(1)}</span>
+      </div>
+      <div class="spotlight-metric-row">
+        <span>Housing & Fuel Share</span>
+        <span style="color:var(--accent); font-weight:700;">${housingPct}% (£${housing.toFixed(1)})</span>
+      </div>
+      <div class="spotlight-metric-row">
+        <span>Transport Share</span>
+        <span>${transPct}% (£${transport.toFixed(1)})</span>
+      </div>
+      <div class="spotlight-metric-row">
+        <span>Recreation & Culture Share</span>
+        <span>${recPct}% (£${rec.toFixed(1)})</span>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      ${editorialNarrative}
+    </div>
+
+    <div class="cat-mini-list">
+      <div style="font-size:0.7rem; font-family:var(--font-mono); text-transform:uppercase; color:var(--text-muted); margin-bottom:2px;">
+        Key Weekly Allocations
+      </div>
+      
+      <div class="cat-mini-item">
+        <div class="cat-mini-label">
+          <span>Housing, Fuel & Power</span>
+          <strong>£${housing.toFixed(1)}</strong>
+        </div>
+        <div class="cat-mini-bar-bg">
+          <div class="cat-mini-bar-fill" style="width: ${Math.min(100, (housing / 200) * 100)}%; background: #f0883e;"></div>
+        </div>
+      </div>
+
+      <div class="cat-mini-item">
+        <div class="cat-mini-label">
+          <span>Transport</span>
+          <strong>£${transport.toFixed(1)}</strong>
+        </div>
+        <div class="cat-mini-bar-bg">
+          <div class="cat-mini-bar-fill" style="width: ${Math.min(100, (transport / 200) * 100)}%; background: #58a6ff;"></div>
+        </div>
+      </div>
+
+      <div class="cat-mini-item">
+        <div class="cat-mini-label">
+          <span>Recreation & Culture</span>
+          <strong>£${rec.toFixed(1)}</strong>
+        </div>
+        <div class="cat-mini-bar-bg">
+          <div class="cat-mini-bar-fill" style="width: ${Math.min(100, (rec / 200) * 100)}%; background: #bc8cff;"></div>
+        </div>
+      </div>
+
+      <div class="cat-mini-item">
+        <div class="cat-mini-label">
+          <span>Food & Non-Alcoholic Drinks</span>
+          <strong>£${food.toFixed(1)}</strong>
+        </div>
+        <div class="cat-mini-bar-bg">
+          <div class="cat-mini-bar-fill" style="width: ${Math.min(100, (food / 200) * 100)}%; background: #39d353;"></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Tooltip interactions
+const tip = document.getElementById("tooltip");
+
+function showTip(evt, reg, val, rawVal, totalVal) {
+  const isPct = currentMetric === 'pct';
+  const displayVal = isPct ? `${val.toFixed(1)}%` : `£${rawVal.toFixed(1)}/week`;
+  const annualized = `Annualized: ~£${Math.round(rawVal * 52).toLocaleString()}`;
+  const shareOfWallet = `${((rawVal / totalVal) * 100).toFixed(1)}% of weekly total (£${totalVal.toFixed(1)})`;
+
+  tip.innerHTML = `
+    <div class="tip-title">${reg}</div>
+    <div class="tip-val">${displayVal}</div>
+    <div style="font-size:0.75rem; color:#8b949e; margin-top:2px;">${shareOfWallet}</div>
+    <div style="font-size:0.7rem; color:#6e7681; margin-top:4px; font-family:var(--font-mono);">${annualized}</div>
+  `;
+  tip.style.opacity = '1';
+  moveTip(evt);
+}
+
+function moveTip(evt) {
+  const offset = 14;
+  let x = evt.clientX + offset;
+  let y = evt.clientY + offset;
+  if (x + 240 > window.innerWidth) x = evt.clientX - 250;
+  if (y + 120 > window.innerHeight) y = evt.clientY - 120;
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+
+function hideTip() {
+  tip.style.opacity = '0';
+}
+
+// Window resize handler
+window.addEventListener('resize', () => {
+  renderChart();
+});
+
+// Initial boot
+renderChart();
+renderSpotlight();
+</script>
+</body>
+</html>

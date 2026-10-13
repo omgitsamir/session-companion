@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Household spending by region</title>
+<style>
+  :root{
+    --ink:#17212b; --muted:#64717d; --grid:#dbe2e8; --paper:#f7f9fb;
+    --blue:#1769aa; --blue2:#9fc9e6; --orange:#e4673d; --teal:#168b87;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:34px 28px 26px}
+  .eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--orange);margin-bottom:12px}
+  h1{font-size:clamp(30px,4vw,52px);line-height:1.02;letter-spacing:-.045em;margin:0 0 13px;max-width:900px}
+  .dek{font-size:17px;line-height:1.45;color:#4b5965;max-width:830px;margin:0 0 24px}
+  .insight{display:flex;gap:24px;flex-wrap:wrap;margin:0 0 25px}
+  .stat{border-left:4px solid var(--orange);padding-left:13px;min-width:190px}
+  .stat strong{display:block;font-size:25px;letter-spacing:-.03em}
+  .stat span{display:block;color:var(--muted);font-size:12px;line-height:1.3;margin-top:3px}
+  .panel{background:white;border:1px solid #e3e8ec;border-radius:16px;box-shadow:0 8px 28px #1e3b5510;padding:22px 20px 14px}
+  .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
+  label{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  select,.toggle{height:38px;border:1px solid #ccd7df;background:#fff;border-radius:8px;color:var(--ink);font:inherit}
+  select{padding:0 34px 0 11px;font-size:14px}
+  .toggle{display:flex;overflow:hidden;padding:0}
+  .toggle button{border:0;background:transparent;padding:0 13px;font-weight:700;color:var(--muted);cursor:pointer}
+  .toggle button.active{background:var(--ink);color:#fff}
+  .hint{margin-left:auto;font-size:12px;color:var(--muted)}
+  svg{display:block;width:100%;height:auto;overflow:visible}
+  .axis text,.label{font-size:12px;fill:var(--muted)}
+  .label{fill:var(--ink);font-weight:650}
+  .grid{stroke:var(--grid);stroke-width:1}
+  .bar{transition:opacity .15s,fill .15s}
+  .bar:hover{opacity:.78}
+  .ukline{stroke:var(--orange);stroke-width:2;stroke-dasharray:6 5}
+  .annotation{font-size:12px;fill:var(--orange);font-weight:800}
+  .legend{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:8px 0 0 96px;font-size:12px;color:var(--muted)}
+  .key{display:inline-flex;align-items:center;gap:7px}.swatch{width:13px;height:13px;border-radius:3px}
+  .foot{font-size:11px;color:#7a8791;margin:17px 2px 0;line-height:1.45}
+  .tip{position:fixed;pointer-events:none;opacity:0;background:#17212b;color:#fff;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.45;box-shadow:0 5px 18px #0003;z-index:5;max-width:230px}
+  .tip b{font-size:13px;color:#fff}
+  @media(max-width:650px){.wrap{padding:25px 14px}.panel{padding:15px 8px 10px}.hint{width:100%;margin-left:0}.legend{padding-left:70px}.dek{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">ONS Family Spending · FYE2023–FYE2025</div>
+  <h1>Where you live can shift a household budget by <span style="color:var(--orange)">£219 a week</span></h1>
+  <p class="dek">South East households spend the most overall. The North East spends the least. London is the striking exception: its total is high largely because <b>housing, fuel and power alone reach £182 a week</b>.</p>
+
+  <div class="insight">
+    <div class="stat"><strong>£724.20</strong><span>South East total per household / week</span></div>
+    <div class="stat"><strong>£505.50</strong><span>North East total per household / week</span></div>
+    <div class="stat"><strong>£182.20</strong><span>London housing, fuel & power / week</span></div>
+  </div>
+
+  <section class="panel">
+    <div class="controls">
+      <label for="category">Show</label>
+      <select id="category" aria-label="Choose spending category"></select>
+      <div class="toggle" role="group" aria-label="Choose unit">
+        <button id="household" class="active">Per household</button>
+        <button id="person">Per person</button>
+      </div>
+      <div class="hint">Hover a bar for detail · UK average shown as a dashed line</div>
+    </div>
+    <svg id="chart" viewBox="0 0 1080 590" role="img" aria-label="Ranked regional household spending bar chart"></svg>
+    <div class="legend" id="legend"></div>
+  </section>
+  <p class="foot">Average £ per household per week, three-year average. Regional areas exclude the UK and England aggregate lines; “Total expenditure” includes all expenditure groups and other expenditure items. Housing segment is shown only for the total view.</p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+const rows = [
+{"Category":"1 Food & non-alcoholic drinks","United Kingdom":69.2,"England":69.5,"North East":60.5,"North West":66.4,"Yorkshire and The Humber":66.0,"East Midlands":69.3,"West Midlands":66.4,"East":74.2,"London":68.7,"South East":74.4,"South West":73.0,"Wales":66.1,"Scotland":64.8,"Northern Ireland":80.9},
+{"Category":"2 Alcoholic drinks, tobacco & narcotics","United Kingdom":11.1,"England":10.8,"North East":9.2,"North West":10.5,"Yorkshire and The Humber":11.1,"East Midlands":11.1,"West Midlands":10.6,"East":11.8,"London":8.4,"South East":12.0,"South West":12.6,"Wales":13.5,"Scotland":10.7,"Northern Ireland":14.3},
+{"Category":"3 Clothing & footwear","United Kingdom":17.4,"England":17.6,"North East":17.5,"North West":17.3,"Yorkshire and The Humber":16.3,"East Midlands":17.0,"West Midlands":15.5,"East":20.5,"London":20.1,"South East":15.4,"South West":18.7,"Wales":16.1,"Scotland":13.7,"Northern Ireland":25.5},
+{"Category":"4 Housing(net)¹, fuel & power","United Kingdom":112.5,"England":117.1,"North East":82.1,"North West":95.0,"Yorkshire and The Humber":97.4,"East Midlands":103.0,"West Midlands":98.5,"East":112.5,"London":182.2,"South East":122.4,"South West":111.9,"Wales":94.3,"Scotland":90.0,"Northern Ireland":76.7},
+{"Category":"5 Household goods & services","United Kingdom":38.3,"England":39.4,"North East":35.1,"North West":38.7,"Yorkshire and The Humber":40.5,"East Midlands":34.9,"West Midlands":31.5,"East":46.2,"London":37.8,"South East":40.0,"South West":46.4,"Wales":34.3,"Scotland":30.0,"Northern Ireland":38.7},
+{"Category":"6 Health","United Kingdom":9.4,"England":9.7,"North East":5.3,"North West":7.5,"Yorkshire and The Humber":8.6,"East Midlands":7.7,"West Midlands":9.3,"East":10.5,"London":10.6,"South East":12.7,"South West":11.3,"Wales":9.3,"Scotland":6.4,"Northern Ireland":10.4},
+{"Category":"7 Transport","United Kingdom":88.0,"England":88.9,"North East":69.0,"North West":72.8,"Yorkshire and The Humber":82.8,"East Midlands":88.5,"West Midlands":89.1,"East":107.3,"London":71.4,"South East":110.3,"South West":98.3,"Wales":84.7,"Scotland":78.7,"Northern Ireland":94.0},
+{"Category":"8 Communication","United Kingdom":21.6,"England":21.8,"North East":20.0,"North West":21.5,"Yorkshire and The Humber":21.0,"East Midlands":21.1,"West Midlands":21.4,"East":23.6,"London":21.2,"South East":22.8,"South West":22.0,"Wales":20.7,"Scotland":21.1,"Northern Ireland":21.3},
+{"Category":"9 Recreation & culture","United Kingdom":73.4,"England":73.9,"North East":64.0,"North West":68.8,"Yorkshire and The Humber":71.0,"East Midlands":64.9,"West Midlands":74.2,"East":84.4,"London":55.6,"South East":93.3,"South West":80.1,"Wales":78.9,"Scotland":70.2,"Northern Ireland":60.6},
+{"Category":"10 Education","United Kingdom":6.3,"England":7.1,"North East":3.9,"North West":3.5,"Yorkshire and The Humber":3.8,"East Midlands":3.0,"West Midlands":4.7,"East":7.2,"London":12.9,"South East":11.0,"South West":7.1,"Wales":2.2,"Scotland":2.5,"Northern Ireland":3.1},
+{"Category":"11 Restaurants & hotels","United Kingdom":44.7,"England":46.1,"North East":35.9,"North West":39.9,"Yorkshire and The Humber":44.2,"East Midlands":36.8,"West Midlands":38.3,"East":48.0,"London":54.0,"South East":52.2,"South West":52.7,"Wales":42.1,"Scotland":33.3,"Northern Ireland":44.4},
+{"Category":"12 Miscellaneous goods & services","United Kingdom":45.2,"England":46.6,"North East":36.6,"North West":42.0,"Yorkshire and The Humber":43.2,"East Midlands":41.0,"West Midlands":42.4,"East":54.4,"London":47.6,"South East":51.9,"South West":51.2,"Wales":39.3,"Scotland":35.3,"Northern Ireland":47.8},
+{"Category":"1-12 All expenditure groups","United Kingdom":537.2,"England":548.4,"North East":439.2,"North West":484.1,"Yorkshire and The Humber":505.9,"East Midlands":498.3,"West Midlands":501.9,"East":600.7,"London":590.6,"South East":618.3,"South West":585.3,"Wales":501.4,"Scotland":456.8,"Northern Ireland":517.7},
+{"Category":"13 Other expenditure items","United Kingdom":85.4,"England":88.3,"North East":66.3,"North West":70.6,"Yorkshire and The Humber":74.2,"East Midlands":74.6,"West Midlands":79.6,"East":97.7,"London":105.3,"South East":106.0,"South West":92.6,"Wales":72.6,"Scotland":71.1,"Northern Ireland":66.1},
+{"Category":"Total expenditure","United Kingdom":622.6,"England":636.7,"North East":505.5,"North West":554.7,"Yorkshire and The Humber":580.1,"East Midlands":572.9,"West Midlands":581.5,"East":698.4,"London":695.9,"South East":724.2,"South West":677.9,"Wales":574.0,"Scotland":528.0,"Northern Ireland":583.8},
+{"Category":"Total expenditure per person","United Kingdom":268.1,"England":271.6,"North East":228.9,"North West":243.0,"Yorkshire and The Humber":252.7,"East Midlands":240.3,"West Midlands":241.7,"East":297.5,"London":288.2,"South East":305.3,"South West":295.7,"Wales":254.6,"Scotland":250.8,"Northern Ireland":239.0}
+];
+const regions=["North East","North West","Yorkshire and The Humber","East Midlands","West Midlands","East","London","South East","South West","Wales","Scotland","Northern Ireland"];
+const categorySelect=document.getElementById("category"), svg=document.getElementById("chart"), tip=document.getElementById("tip");
+const total=rows.find(d=>d.Category==="Total expenditure"), housing=rows.find(d=>d.Category.startsWith("4 Housing"));
+let mode="household";
+const options=["Total expenditure",...rows.filter(d=>!d.Category.includes("Total expenditure")&&!d.Category.includes("All expenditure groups")).map(d=>d.Category)];
+options.forEach((x,i)=>{let o=document.createElement("option");o.value=x;o.textContent=x.replace(/^[0-9]+[ -]/,"");categorySelect.appendChild(o);});
+categorySelect.value="Total expenditure";
+
+function short(s){return s.replace("Yorkshire and The Humber","Yorkshire & Humber").replace("Northern Ireland","N. Ireland").replace("North East","North East").replace("South East","South East");}
+function money(v){return "£"+v.toFixed(1);}
+function draw(){
+  const selected=categorySelect.value, isTotal=selected==="Total expenditure", per=mode==="person";
+  let source=per?rows.find(d=>d.Category==="Total expenditure per person"):rows.find(d=>d.Category===selected);
+  let vals=regions.map(r=>({r,v:source[r]})).sort((a,b)=>b.v-a.v);
+  const W=1080,H=590,left=190,right=54,top=55,bottom=54,plotW=W-left-right,plotH=H-top-bottom;
+  const max=Math.ceil(Math.max(...vals.map(d=>d.v),source["United Kingdom"])*1.12/50)*50;
+  const x=v=>left+(v/max)*plotW, y=i=>top+i*(plotH/vals.length)+7, bh=Math.min(30,plotH/vals.length-9);
+  svg.innerHTML="";
+  const ns="http://www.w3.org/2000/svg";
+  const el=(tag,a={},txt="")=>{let n=document.createElementNS(ns,tag);Object.entries(a).forEach(([k,v])=>n.setAttribute(k,v));if(txt)n.textContent=txt;svg.appendChild(n);return n};
+  for(let t=0;t<=max;t+=50){el("line",{x1:x(t),x2:x(t),y1:top-7,y2:H-bottom,class:"grid"});el("text",{x:x(t),y:H-bottom+28,"text-anchor":"middle",class:"axis"},"£"+t);}
+  el("text",{x:left,y:22,class:"axis"},"AVERAGE £ PER WEEK");
+  const uk=source["United Kingdom"];
+  el("line",{x1:x(uk),x2:x(uk),y1:top-15,y2:H-bottom,class:"ukline"});
+  el("text",{x:x(uk)+7,y:top-20,class:"annotation","text-anchor":"start"},"UK "+money(uk));
+  vals.forEach((d,i)=>{
+    let yy=y(i), label=short(d.r);
+    el("text",{x:left-14,y:yy+bh*.68,"text-anchor":"end",class:"label"},label);
+    let base=isTotal&&!per ? Math.max(0,d.v-housing[d.r]) : 0;
+    if(isTotal&&!per){
+      let a=el("rect",{x:left,y:yy,width:x(base)-left,height:bh,rx:4,class:"bar",fill:"#9fc9e6"});
+      let b=el("rect",{x:x(base),y:yy,width:x(d.v)-x(base),height:bh,rx:4,class:"bar",fill:"#1769aa"});
+      [a,b].forEach(n=>bind(n,d,d.v));
+    } else {
+      let b=el("rect",{x:left,y:yy,width:x(d.v)-left,height:bh,rx:4,class:"bar",fill:d.r==="London"?"#e4673d":"#1769aa"});bind(b,d,d.v);
+    }
+    el("text",{x:x(d.v)+9,y:yy+bh*.68,class:"label"},money(d.v));
+  });
+  const legend=document.getElementById("legend");
+  legend.innerHTML=isTotal&&!per?
+    '<span class="key"><i class="swatch" style="background:#1769aa"></i>Housing, fuel & power</span><span class="key"><i class="swatch" style="background:#9fc9e6"></i>Everything else</span><span class="key"><i class="swatch" style="background:#e4673d"></i>London highlighted</span>':
+    '<span class="key"><i class="swatch" style="background:#1769aa"></i>Selected spending category</span><span class="key"><i class="swatch" style="background:#e4673d"></i>London highlighted</span>';
+  let title=isTotal&&!per?"Total expenditure":"Selected category";
+  svg.setAttribute("aria-label",title+" ranked by region");
+}
+function bind(node,d,v){
+  node.addEventListener("mousemove",e=>{
+    const extra=categorySelect.value==="Total expenditure"&&mode==="household"?`<br>Housing: <b>${money(housing[d.r])}</b>`:"";
+    tip.innerHTML=`<b>${d.r}</b><br>${money(v)} per ${mode==="person"?"person":"household"} / week${extra}`;
+    tip.style.opacity=1;tip.style.left=(e.clientX+14)+"px";tip.style.top=(e.clientY-48)+"px";
+  });
+  node.addEventListener("mouseleave",()=>tip.style.opacity=0);
+}
+categorySelect.addEventListener("change",draw);
+document.getElementById("household").addEventListener("click",()=>{mode="household";document.getElementById("household").classList.add("active");document.getElementById("person").classList.remove("active");draw();});
+document.getElementById("person").addEventListener("click",()=>{mode="person";document.getElementById("person").classList.add("active");document.getElementById("household").classList.remove("active");draw();});
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health inequality across local authorities</title>
+<style>
+  :root{
+    --ink:#17202a; --muted:#68737d; --grid:#dfe5e8; --paper:#f7f5f0;
+    --coral:#e45756; --blue:#276fbf; --gold:#f2b134; --teal:#168c8c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+  main{max-width:1220px;margin:auto;padding:34px 34px 24px}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--coral);margin-bottom:10px}
+  h1{font-size:clamp(28px,4vw,50px);line-height:1.02;letter-spacing:-.045em;margin:0;max-width:850px}
+  .dek{font-size:17px;line-height:1.45;color:#4c5962;max-width:760px;margin:15px 0 24px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:17px}
+  .group{display:flex;background:white;border:1px solid #d8dfe2;border-radius:9px;overflow:hidden}
+  button,select,input{font:inherit}
+  button{border:0;background:white;color:#35414a;padding:10px 14px;cursor:pointer;font-weight:700}
+  button.active{background:var(--ink);color:white}
+  button:hover{background:#edf1f2}
+  button.active:hover{background:var(--ink)}
+  select,input{border:1px solid #d8dfe2;border-radius:9px;background:white;padding:10px 12px;color:#35414a}
+  input{width:190px}
+  .chart-card{background:white;border:1px solid #dde3e5;border-radius:15px;box-shadow:0 8px 25px #23323b0d;padding:12px 14px 10px}
+  svg{display:block;width:100%;height:auto}
+  .axis{font-size:12px;fill:#68737d}
+  .axis-title{font-size:13px;fill:#42505a;font-weight:700}
+  .grid{stroke:var(--grid);stroke-width:1}
+  .trend{stroke:var(--coral);stroke-width:3;stroke-dasharray:8 7;opacity:.85}
+  .point{stroke:white;stroke-width:1.5;cursor:pointer;transition:opacity .15s,stroke-width .15s}
+  .point:hover{stroke:var(--ink);stroke-width:3}
+  .point.dim{opacity:.12}
+  .point.searchhit{stroke:var(--gold);stroke-width:4}
+  .annotation{font-size:13px;fill:#34414a;font-weight:700}
+  .annotation-line{stroke:#34414a;stroke-width:1.2}
+  .legend{display:flex;gap:18px;align-items:center;padding:3px 8px 0;font-size:12px;color:#56636b;flex-wrap:wrap}
+  .swatch{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-2px;margin-right:5px}
+  .foot{font-size:12px;line-height:1.45;color:#77828a;margin:13px 4px 0}
+  #tip{position:fixed;display:none;pointer-events:none;background:#17202a;color:white;border-radius:8px;padding:11px 13px;box-shadow:0 7px 20px #0003;font-size:13px;line-height:1.5;z-index:4;max-width:245px}
+  #tip strong{font-size:15px;color:#fff}
+  .stat{font-weight:800;color:var(--coral)}
+  @media(max-width:650px){main{padding:25px 14px}.dek{font-size:15px}.controls{gap:7px}.group button{padding:9px 10px}input{width:145px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">OHID Fingertips · local-authority health indicators</div>
+  <h1>Where you live can mean <span style="color:var(--coral)">years of life</span> lost.</h1>
+  <p class="dek">The clearest divide in this local-authority snapshot is not subtle: places with higher deprivation tend to have markedly shorter lives. The relationship is a warning about unequal conditions — not a judgement on the people who live there.</p>
+
+  <div class="controls" aria-label="Chart controls">
+    <div class="group" role="group" aria-label="Life expectancy sex">
+      <button id="maleBtn" class="active">Male life expectancy</button>
+      <button id="femaleBtn">Female life expectancy</button>
+    </div>
+    <select id="subset" aria-label="Show areas">
+      <option value="all">Show all preview areas</option>
+      <option value="worst">Highlight 10 most deprived</option>
+      <option value="best">Highlight 10 least deprived</option>
+    </select>
+    <select id="bubble" aria-label="Bubble size">
+      <option value="mort">Bubble size: under-75 mortality</option>
+      <option value="att">Bubble size: attainment score</option>
+    </select>
+    <input id="search" type="search" placeholder="Find an authority…" aria-label="Find an authority">
+  </div>
+
+  <section class="chart-card">
+    <svg id="chart" viewBox="0 0 1000 620" role="img" aria-label="Scatter plot of deprivation against life expectancy"></svg>
+    <div class="legend">
+      <span><i class="swatch" style="background:#e45756"></i>10 most deprived preview areas</span>
+      <span><i class="swatch" style="background:#276fbf"></i>other areas</span>
+      <span>Circle size = under-75 mortality rate</span>
+    </div>
+  </section>
+  <p id="summary" class="foot"></p>
+  <p class="foot">Source: OHID Fingertips, study slice. Values shown are from the supplied data preview; indicator periods vary (life expectancy and mortality: 2025; deprivation: IMD 2019). Missing values are omitted from the plot. Correlation is descriptive, not causal.</p>
+</main>
+<div id="tip"></div>
+
+<script>
+const csv = `name|dep|m|f|mort|att
+Hartlepool|35.04|77.8|81.1|415.01|42.3
+Middlesbrough|40.46|76.9|81.6|455.23|41.9
+Redcar and Cleveland|29.79|79.2|81.8|375.14|43.9
+Stockton-on-Tees|25.79|78.7|82.4|370.36|45
+Darlington|25.66|78.6|82.1|387.63|44
+Halton|32.33|76.9|82.6|414.09|42.6
+Warrington|18.94|79.5|83.2|331.23|49.2
+Blackburn with Darwen|36.01|76.4|81|470.24|45.6
+Blackpool|45.04|75.3|79.9|554.98|38.4
+Kingston upon Hull|40.56|75.7|80.9|494.29|40.4
+East Riding of Yorkshire|15.6|80.8|84.1|289.1|45.1
+North East Lincolnshire|31.34|75.3|82.2|472.44|41.7
+North Lincolnshire|22.1|77.4|82.1|411.91|44.2
+York|11.73|80.4|84.2|297.87|50.7
+Derby|26.32|77.9|82.7|379.5|42.5
+Leicester|30.88|78.1|82|392.57|45.2
+Rutland|8.38|83.2|84.9|212.15|50.1
+Nottingham|34.89|77.4|81.4|445.34|43.5
+Herefordshire|18.89|80.4|84.6|288.31|44.5
+Telford and Wrekin|24.99|78.8|82.7|359.01|42.1
+Stoke-on-Trent|34.5|77|80.4|471.36|40
+Bath and North East Somerset|11.74|82|85.7|249.29|47.4
+Bristol|26.36|79.1|83.4|355.51|45.9
+North Somerset|15.82|80.4|84.9|278.53|47
+South Gloucestershire|11.66|81.8|85.1|269.36|46.3
+Plymouth|26.62|78|81.9|400.82|44.8
+Torbay|28.1|77.9|83|385.15|44
+Swindon|18.62|79.8|83.7|314.11|45.9
+Peterborough|27.82|77.3|82.7|391.68|43.1
+Luton|25.91|78.4|83.3|367.47|45.2
+Southend-on-Sea|22.38|79.4|84.2|338.95|47.1
+Thurrock|20.93|79.4|83.4|341.78|46.3
+Medway|23.94|78.5|82.9|370.45|45
+Bracknell Forest|10.24|82.1|85.6|242.57|47.2
+West Berkshire|9.95|82|84.9|258.62|48.3
+Reading|19.62|78.9|83.5|358.23|46.4
+Slough|22.96|78.5|82.9|391.74|49.4
+Windsor and Maidenhead|8.38|81.2|85.3|270.94|51.6
+Wokingham|5.85|82.7|87.3|212.23|55.6
+Milton Keynes|17.98|79.6|84.3|316.09|45.2
+Brighton and Hove|20.76|79.7|84.1|327.74|46.4
+Portsmouth|26.9|77.8|81.9|411.24|39.5
+Southampton|26.88|78|82.4|396.28|41.9
+Isle of Wight|23.29|77.2|83.6|393.79|41.5
+County Durham|26.79|78.3|82.1|380.49|44.6
+Cheshire East|14.48|80.6|84|297.48|47.1
+Shropshire|17.15|81|85|277.36|43
+Cornwall|23.07|80.1|83.8|303.8|45.5
+Wiltshire|13.45|82|85.4|252.6|45.8
+Bedford|18.93|80.2|83.4|335.96|44.3
+Northumberland|22.08|79.6|83.3|318.41|43.9
+Bournemouth, Christchurch and Poole|18.17|81|85|278.2|49.6
+Dorset|15.74|82.1|85.4|247.36|44.1
+Buckinghamshire UA|10.05|82.2|85.4|248.94|51.2
+North Northamptonshire|19.66|79|83.2|361.76|43.3
+West Northamptonshire|17.71|80.2|83.8|312.16|45.3
+Cumberland|23.09|78.8|82.2|366.87|42.8`;
+const data = csv.split("\n").slice(1).map(r=>{
+  const [name,dep,m,f,mort,att]=r.split("|");
+  return {name,dep:+dep,m:+m,f:+f,mort:+mort,att:+att};
+});
+
+const svg=document.getElementById("chart"), tip=document.getElementById("tip");
+const W=1000,H=620, M={l:82,r:28,t:30,b:72}, pw=W-M.l-M.r, ph=H-M.t-M.b;
+const x=v=>M.l+(v/46)*pw, y=v=>M.t+((88-v)/14)*ph;
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let sex="m", subset="all", bubble="mort", query="";
+
+function corr(arr){
+  const a=arr.map(d=>d.dep), b=arr.map(d=>d[sex]), ax=a.reduce((s,v)=>s+v,0)/a.length, bx=b.reduce((s,v)=>s+v,0)/b.length;
+  let n=0,da=0,db=0; a.forEach((v,i)=>{n+=(v-ax)*(b[i]-bx);da+=(v-ax)**2;db+=(b[i]-bx)**2});
+  return n/Math.sqrt(da*db);
+}
+function render(){
+  const ranked=[...data].sort((a,b)=>b.dep-a.dep);
+  const hi=new Set((subset==="worst"?ranked.slice(0,10):subset==="best"?ranked.slice(-10):[]).map(d=>d.name));
+  const valid=data.filter(d=>Number.isFinite(d.dep)&&Number.isFinite(d[sex]));
+  const minX=Math.min(...valid.map(d=>d.dep)), maxX=Math.max(...valid.map(d=>d.dep));
+  const avx=valid.reduce((s,d)=>s+d.dep,0)/valid.length, avy=valid.reduce((s,d)=>s+d[sex],0)/valid.length;
+  let num=0,den=0; valid.forEach(d=>{num+=(d.dep-avx)*(d[sex]-avy);den+=(d.dep-avx)**2});
+  const slope=num/den, intercept=avy-slope*avx;
+  let out=`<rect width="1000" height="620" fill="white"/>`;
+  [74,76,78,80,82,84,86,88].forEach(v=>{out+=`<line class="grid" x1="${M.l}" x2="${W-M.r}" y1="${y(v)}" y2="${y(v)}"/><text class="axis" x="${M.l-13}" y="${y(v)+4}" text-anchor="end">${v}</text>`});
+  [0,10,20,30,40].forEach(v=>{out+=`<line class="grid" x1="${x(v)}" x2="${x(v)}" y1="${M.t}" y2="${H-M.b}"/><text class="axis" x="${x(v)}" y="${H-M.b+23}" text-anchor="middle">${v}</text>`});
+  out+=`<text class="axis-title" x="${M.l+pw/2}" y="606" text-anchor="middle">Deprivation score (IMD 2019) — higher means more deprived</text>`;
+  out+=`<text class="axis-title" transform="translate(19 ${M.t+ph/2}) rotate(-90)" text-anchor="middle">${sex==="m"?"Male":"Female"} life expectancy at birth (years)</text>`;
+  out+=`<line class="trend" x1="${x(minX)}" y1="${y(intercept+slope*minX)}" x2="${x(maxX)}" y2="${y(intercept+slope*maxX)}"/>`;
+  if(sex==="m") out+=`<text class="annotation" x="${x(35)}" y="${y(86.4)}">More deprivation, shorter lives</text><line class="annotation-line" x1="${x(35)}" y1="${y(86.1)}" x2="${x(30)}" y2="${y(intercept+slope*30)}"/>`;
+  data.forEach(d=>{
+    const v=d[sex]; if(!Number.isFinite(v))return;
+    const r=5+Math.sqrt(Math.max(0,d[bubble]-(bubble==="mort"?200:38)))/(bubble==="mort"?3.2:1.15);
+    const isHi=hi.has(d.name), match=!query||d.name.toLowerCase().includes(query);
+    const cls=`point ${isHi?"":"normal"} ${match?"":"dim"} ${query&&match?"searchhit":""}`;
+    const color=isHi||(!query&&subset==="worst")?"#e45756":"#276fbf";
+    out+=`<circle class="${cls}" cx="${x(d.dep)}" cy="${y(v)}" r="${Math.min(18,r)}" fill="${color}" data-name="${esc(d.name)}" data-v="${v}" data-d="${d.dep}" data-mort="${d.mort}" data-att="${d.att}"/>`;
+  });
+  svg.innerHTML=out;
+  svg.querySelectorAll("circle").forEach(c=>{
+    c.addEventListener("mousemove",e=>{
+      const d=data.find(z=>z.name===c.dataset.name);
+      tip.innerHTML=`<strong>${esc(d.name)}</strong><br>Deprivation: ${d.dep.toFixed(1)}<br>Male life expectancy: ${d.m.toFixed(1)} years<br>Female life expectancy: ${d.f.toFixed(1)} years<br>Under-75 mortality: ${d.mort.toFixed(0)} per 100,000<br>Attainment 8: ${d.att.toFixed(1)}`;
+      tip.style.display="block"; tip.style.left=(e.clientX+15)+"px"; tip.style.top=(e.clientY+15)+"px";
+    });
+    c.addEventListener("mouseleave",()=>tip.style.display="none");
+  });
+  const r=corr(valid);
+  const gap=valid.filter(d=>d.dep>=30).map(d=>d[sex]).reduce((a,b)=>a+b,0)/valid.filter(d=>d.dep>=30).length;
+  const low=valid.filter(d=>d.dep<15).map(d=>d[sex]).reduce((a,b)=>a+b,0)/valid.filter(d=>d.dep<15).length;
+  document.getElementById("summary").innerHTML=`<span class="stat">The pattern is stark:</span> in this preview, authorities scoring 30+ on deprivation average ${gap.toFixed(1)} years of ${sex==="m"?"male":"female"} life expectancy, versus ${low.toFixed(1)} years where deprivation is below 15 — a gap of ${(low-gap).toFixed(1)} years. Correlation: ${r.toFixed(2)}. Hover any circle for detail.`;
+}
+document.getElementById("maleBtn").onclick=()=>{sex="m"; maleBtn.classList.add("active");femaleBtn.classList.remove("active");render()};
+document.getElementById("femaleBtn").onclick=()=>{sex="f"; femaleBtn.classList.add("active");maleBtn.classList.remove("active");render()};
+document.getElementById("subset").onchange=e=>{subset=e.target.value;render()};
+document.getElementById("bubble").onchange=e=>{bubble=e.target.value;render()};
+document.getElementById("search").oninput=e=>{query=e.target.value.toLowerCase().trim();render()};
+render();
+</script>
+</body>
+</html>
