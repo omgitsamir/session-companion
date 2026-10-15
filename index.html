@@ -167,10 +167,9 @@ const CONFIG = {
  /* Inspection: participants can open the dataset and the generated source code.
     code_at: "reveal" (default) or "elicit" — "elicit" makes the code button available in the unprimed phase too. */
  code_at: "reveal",
- sync_server: "wss://vps-33271cf2.vps.ovh.net//sync",
- /* WebSocket relay for two-computer sessions, e.g. "wss://your-vps-host/sync".
+ /* sync_server: WebSocket relay for two-computer sessions, e.g. "wss://your-vps-host/sync".
     Leave "" to disable room mode (same-machine BroadcastChannel sync still works). */
- sync_server: "",
+ sync_server: "wss://vps-33271cf2.vps.ovh.net/sync",
  data_files: { DA:"bundle/data/DA.csv", DB:"bundle/data/DB.csv", DC:"bundle/data/DC.csv" },
  data_samples: { DA:"bundle/data/DA_sample.json", DB:"bundle/data/DB_sample.json", DC:"bundle/data/DC_sample.json" },
  cues: {
