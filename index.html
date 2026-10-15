@@ -167,6 +167,9 @@ const CONFIG = {
  /* Inspection: participants can open the dataset and the generated source code.
     code_at: "reveal" (default) or "elicit" — "elicit" makes the code button available in the unprimed phase too. */
  code_at: "reveal",
+ /* sync_server: WebSocket relay for two-computer sessions, e.g. "wss://your-vps-host/sync".
+    Leave "" to disable room mode (same-machine BroadcastChannel sync still works). */
+ sync_server: "",
  data_files: { DA:"bundle/data/DA.csv", DB:"bundle/data/DB.csv", DC:"bundle/data/DC.csv" },
  data_samples: { DA:"bundle/data/DA_sample.json", DB:"bundle/data/DB_sample.json", DC:"bundle/data/DC_sample.json" },
  cues: {
@@ -186,9 +189,33 @@ document.getElementById("roleTag").textContent = HOST ? "RESEARCHER CONSOLE" : "
 let bundle={}, S=null, tick=null, phaseStart=null;
 const $=s=>document.querySelector(s), app=$("#app");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
-const bc = ("BroadcastChannel" in window) ? new BroadcastChannel("sc3") : null;
-function send(m){ m._t=Date.now(); if(bc) bc.postMessage(m); localStorage.setItem("sc3_msg", JSON.stringify(m)); }
-function onMsg(f){ if(bc) bc.onmessage=e=>f(e.data); window.addEventListener("storage",e=>{ if(e.key==="sc3_msg"&&e.newValue) f(JSON.parse(e.newValue)); }); }
+const ROOM=((new URLSearchParams(location.search).get("room"))||"").replace(/[^\w-]/g,"");
+const bc = (!ROOM && "BroadcastChannel" in window) ? new BroadcastChannel("sc3") : null;
+let ws=null, wsHandler=null, wsOpen=false, wsQ=[], wsPending=null;
+function syncDot(ok,txt){ if(!ROOM) return; let d=document.getElementById("syncDot");
+ if(!d){ d=document.createElement("div"); d.id="syncDot";
+  d.style.cssText="position:fixed;bottom:10px;right:12px;z-index:900;font:12px/1.6 system-ui;padding:3px 10px;border-radius:12px;border:1px solid #ccc;background:#fff;opacity:.92";
+  document.body.appendChild(d); }
+ d.textContent=txt; d.style.color=ok?"#1b7f3b":"#b3261e"; }
+function wsConnect(){
+ if(!ROOM) return;
+ if(!CONFIG.sync_server){ syncDot(false,"remote off \u2014 set CONFIG.sync_server"); return; }
+ try{ ws=new WebSocket(CONFIG.sync_server+"?room="+encodeURIComponent(ROOM)); }
+ catch(e){ syncDot(false,"remote: bad sync_server value"); return; }
+ ws.onopen=()=>{ wsOpen=true; syncDot(true,(HOST?"console":"participant")+" \u00b7 room "+ROOM+" \u00b7 connected");
+  while(wsQ.length) ws.send(wsQ.shift());
+  if(HOST){ if(S) broadcast(); } else { send({type:"hello"}); } };
+ ws.onmessage=e=>{ let m; try{ m=JSON.parse(e.data); }catch(_){ return; } if(wsHandler) wsHandler(m); else wsPending=m; };
+ ws.onclose=()=>{ wsOpen=false; syncDot(false,"remote: reconnecting\u2026"); setTimeout(wsConnect,2000); };
+ ws.onerror=()=>{ try{ ws.close(); }catch(_){ } };
+}
+function send(m){ m._t=Date.now();
+ if(ROOM){ const s=JSON.stringify(m); if(wsOpen&&ws&&ws.readyState===1) ws.send(s); else wsQ.push(s); return; }
+ if(bc) bc.postMessage(m); localStorage.setItem("sc3_msg", JSON.stringify(m)); }
+function onMsg(f){ wsHandler=f;
+ if(ROOM){ if(wsPending){ const m=wsPending; wsPending=null; f(m); } if(!HOST&&wsOpen) send({type:"hello"}); return; }
+ if(bc) bc.onmessage=e=>f(e.data); window.addEventListener("storage",e=>{ if(e.key==="sc3_msg"&&e.newValue) f(JSON.parse(e.newValue)); }); }
+wsConnect();
 async function loadBundle(){
  const [man,defs,alloc]=await Promise.all(["bundle/pool_manifest.json","bundle/defs56.json","bundle/allocation.json"].map(u=>fetch(u).then(r=>r.json())));
  bundle={man,defs,alloc}; bundle.bySlot=Object.fromEntries(man.slots.map(s=>[s.slot,s]));
@@ -418,12 +445,20 @@ function hSetup(){
    <select id="pid">${bundle.alloc.williams.map(r=>`<option>${r.participant}</option>`).join("")}</select></label>
    <button id="startBtn" style="margin-left:16px">Start session</button>
    <span id="resume"></span></div>
+  <div class="card"><b>Remote session (two computers)</b> <span id="remoteBody" class="small"></span></div>
   <div class="card"><b>Rotation (Williams 8×8×3)</b><table class="order"><tr><th>ID</th><th>Order</th></tr>${rows}</table></div>`;
  const pidSel=$("#pid");
  const checkResume=()=>{ const ex=localStorage.getItem("sc3_"+pidSel.value);
    $("#resume").innerHTML=ex?` <button class="warn" id="resumeBtn">Resume saved ${pidSel.value}</button>`:"";
    const b=$("#resumeBtn"); if(b) b.onclick=()=>{S=JSON.parse(ex); S.intake=S.intake||{}; enter(S.stage,true);};};
  pidSel.onchange=checkResume; checkResume();
+ const rb=$("#remoteBody");
+ if(!CONFIG.sync_server){ rb.textContent="off \u2014 set CONFIG.sync_server in index.html to enable"; }
+ else if(!ROOM){ rb.innerHTML=`<button class="sec" id="mkRoom">Create room</button> \u2014 re-opens this console in a room and shows the participant link`;
+  $("#mkRoom").onclick=()=>{ const q=new URLSearchParams(location.search); q.set("room","r"+Math.random().toString(36).slice(2,8)); location.search="?"+q.toString(); }; }
+ else { const plink=location.origin+location.pathname+"?room="+ROOM;
+  rb.innerHTML=`room <b>${ROOM}</b> \u2014 send the participant this link: <code id="plink">${plink}</code> <button class="sec" id="cpLink">Copy</button>`;
+  $("#cpLink").onclick=()=>{ if(navigator.clipboard){ navigator.clipboard.writeText(plink); $("#cpLink").textContent="Copied"; } }; }
  $("#startBtn").onclick=()=>{ S=newSession(pidSel.value); log("session_start",{}); enter("intake"); };
 }
 function hIntake(){
@@ -562,6 +597,7 @@ loadBundle().then(()=>{
  if(HOST){
   $("#exportBtn").style.display="inline-block"; $("#exportBtn").onclick=exportJSON;
   onMsg(m=>{ if(!S) return;
+   if(m.type==="hello"){ broadcast(); }
    if(m.type==="rating"){ S.onec[m.which]=m.val; save(); const el=$("#h"+m.which); if(el) el.textContent=m.val; }
    if(m.type==="intake"){ applyIntake(m.field,m.val); }
    if(m.type==="plog"){ log("participant",m); }});

@@ -1,0 +1,14 @@
+[Unit]
+Description=sc3 Session Companion sync relay
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /srv/sc3-relay/relay.js
+WorkingDirectory=/srv/sc3-relay
+Restart=always
+RestartSec=2
+User=ubuntu
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
