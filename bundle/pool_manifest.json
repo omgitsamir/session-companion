@@ -1,5 +1,5 @@
 {
- "config": "A \u2014 S2 sonnet interactive; T19 abstract-only (Round 2)",
+ "config": "A — S2 sonnet interactive; T19 abstract-only (Round 2)",
  "slots": [
   {
    "slot": "S1",
@@ -16,79 +16,92 @@
      "item": "T23",
      "evidence": "y-axis floor 80",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The y-axis starts at 80 rather than zero, so the rise looks steeper than the numbers alone would show."
     },
     {
      "item": "T08",
      "evidence": "averaging/rolling",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The series is smoothed with a rolling four-quarter average."
     },
     {
      "item": "T10",
      "evidence": "grouping/binning",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Vehicle types are combined into broad groups."
     },
     {
      "item": "T15",
      "evidence": "extreme-case annotation",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "An extreme case is explicitly called out in an annotation."
     },
     {
      "item": "T16",
      "evidence": "uncertainty band",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "An uncertainty band is drawn around the line."
     },
     {
      "item": "T37",
      "evidence": "typographic emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Bold type picks out the headline figures."
     },
     {
      "item": "T33",
      "evidence": "shaded grouping",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Shaded bands group periods of time together."
     },
     {
      "item": "T51",
      "evidence": "explicit ordering",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The series are presented in a deliberate order."
     },
     {
      "item": "T11",
      "evidence": "source line present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A source line names where the data comes from."
     },
     {
      "item": "T09",
      "evidence": "'Change since Q4 1994' summary box",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A ‘Change since Q4 1994’ summary box stands in for the detail."
     },
     {
      "item": "T13",
      "evidence": "footnote explains the rolling four-quarter method",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A footnote explains the rolling-average method."
     },
     {
      "item": "T18",
      "evidence": "'Recent quarters provisional'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A note marks recent quarters as provisional."
     },
     {
      "item": "T42",
-     "evidence": "title metaphor: 'left \u2026 in the dust'",
+     "evidence": "title metaphor: 'left … in the dust'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The title says vans left everything else ‘in the dust’."
     }
    ],
    "siblings": [
@@ -125,61 +138,71 @@
      "item": "T56",
      "evidence": "dropdown menu",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A dropdown menu offers preset views."
     },
     {
      "item": "T55",
      "evidence": "search box",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A search box invites you to look up your own area."
     },
     {
      "item": "T49",
      "evidence": "explicit default state",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The page opens on a chosen default view."
     },
     {
      "item": "T47",
      "evidence": "event-driven interaction",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Clickable controls invite you to explore in particular ways."
     },
     {
      "item": "T37",
      "evidence": "css emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Styled text picks out key phrases."
     },
     {
      "item": "T04",
      "evidence": "dashed reference line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A dashed reference line marks a comparison point."
     },
     {
      "item": "T09",
      "evidence": "constructed summary score",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A constructed summary score headlines the page."
     },
     {
      "item": "T01",
      "evidence": "no source citation",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "No source for the data is named anywhere on the page."
     },
     {
      "item": "T46",
-     "evidence": "direct address: 'your life expectancy\u2026your postcode'",
+     "evidence": "direct address: 'your life expectancy…your postcode'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The text addresses you directly — ‘your life expectancy … your postcode’."
     },
     {
      "item": "T48",
-     "evidence": "'real communities, real families' \u2014 resident framing (candidate)",
+     "evidence": "'real communities, real families' — resident framing (candidate)",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "Annotations speak from a resident’s viewpoint — ‘real communities, real families’."
     }
    ],
    "siblings": [
@@ -219,49 +242,57 @@
      "item": "T35",
      "evidence": "fitted trend line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A fitted trend line asserts the pattern."
     },
     {
      "item": "T05",
      "evidence": "top/bottom-N selection",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Only the top and bottom authorities are shown; the middle is left out."
     },
     {
      "item": "T15",
      "evidence": "extreme-case annotation",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "An extreme case is explicitly annotated."
     },
     {
      "item": "T37",
      "evidence": "typographic emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Emphasis typography picks out the key figures."
     },
     {
      "item": "T11",
      "evidence": "source line present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A source line names where the data comes from."
     },
     {
      "item": "T38",
      "evidence": "question title",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The title is a question — ‘Born in Blackpool or born in Wokingham?’"
     },
     {
      "item": "T09",
      "evidence": "'the gap: 7.4 years of life' headline stat",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "‘The gap: 7.4 years of life’ headlines the chart."
     },
     {
      "item": "T25",
-     "evidence": "'deprivation explains\u2026'; '~4 points costs roughly a year'",
+     "evidence": "'deprivation explains…'; '~4 points costs roughly a year'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The text says deprivation ‘explains’ the gap and that about four points ‘costs roughly a year’."
     }
    ],
    "siblings": [
@@ -298,61 +329,71 @@
      "item": "T56",
      "evidence": "dropdown menu",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A dropdown menu offers preset views."
     },
     {
      "item": "T51",
      "evidence": "sortable ordering",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The ordering is sortable — what comes first is a choice."
     },
     {
      "item": "T47",
      "evidence": "exploration buttons",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Exploration buttons invite particular comparisons."
     },
     {
      "item": "T37",
      "evidence": "css emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Styled text picks out the key figures."
     },
     {
      "item": "T29",
      "evidence": "valenced colours",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The colour palette carries emotional loading."
     },
     {
      "item": "T04",
      "evidence": "dashed reference line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A dashed reference line marks the comparison point."
     },
     {
      "item": "T09",
      "evidence": "constructed summary score",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A constructed summary score headlines the page."
     },
     {
      "item": "T01",
      "evidence": "no source citation",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "No source for the data is named anywhere on the page."
     },
     {
      "item": "T42",
      "evidence": "title metaphor: 'eating London's weekly budget alive'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Housing costs are described as ‘eating London’s weekly budget alive’."
     },
     {
      "item": "T41",
-     "evidence": "analogy: premium \u2248 'entire weekly food bill'",
+     "evidence": "analogy: premium ≈ 'entire weekly food bill'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The London premium is compared to ‘an entire weekly food bill’."
     }
    ],
    "siblings": [
@@ -392,43 +433,50 @@
      "item": "T04",
      "evidence": "reference/threshold line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A reference line marks the comparison point."
     },
     {
      "item": "T37",
      "evidence": "typographic emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Emphasis typography picks out the key figures."
     },
     {
      "item": "T11",
      "evidence": "source line present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A source line names the data’s origin."
     },
     {
      "item": "T25",
-     "evidence": "'How housing costs choke\u2026'; 'forcing\u2026to fall'; 'sacrifice'",
+     "evidence": "'How housing costs choke…'; 'forcing…to fall'; 'sacrifice'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The text says housing costs ‘choke’ spending, ‘forcing’ it to fall — a ‘sacrifice’."
     },
     {
      "item": "T42",
      "evidence": "'Rent Trap'; 'Devour'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Costs are described as a ‘Rent Trap’ that ‘devours’ budgets."
     },
     {
      "item": "T43",
-     "evidence": "parallel panel subtitles: 'outstrip\u2026' / 'sinks to bottom\u2026'",
+     "evidence": "parallel panel subtitles: 'outstrip…' / 'sinks to bottom…'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The panel subtitles mirror each other — ‘outstrip…’ / ‘sinks to bottom…’."
     },
     {
      "item": "T09",
      "evidence": "three stat cards",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Three stat cards headline the figures."
     }
    ],
    "siblings": [
@@ -465,55 +513,64 @@
      "item": "T12",
      "evidence": "'Further reading: The Geography of Inequality, Danny Dorling'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A ‘Further reading’ line points to Danny Dorling’s book."
     },
     {
      "item": "T20",
-     "evidence": "fabricated byline: 'Dr. Sarah Thompson, Economic Geographer' \u2014 debrief note",
+     "evidence": "fabricated byline: 'Dr. Sarah Thompson, Economic Geographer' — debrief note",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A byline introduces the author — ‘Dr. Sarah Thompson, Economic Geographer’."
     },
     {
      "item": "T21",
-     "evidence": "first-person anecdote: 'I remember my first week in London\u2026'",
+     "evidence": "first-person anecdote: 'I remember my first week in London…'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A first-person story opens the piece — ‘I remember my first week in London…’."
     },
     {
      "item": "T30",
      "evidence": "multi-bar clutter; floating region labels",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Dense multi-bar panels and floating region labels make the eye work."
     },
     {
      "item": "T28",
      "evidence": "region names colour-coded as text",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "Region names are colour-coded as text."
     },
     {
      "item": "T34",
      "evidence": "styled region-name classes",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "Consistent text styles sort the regions into kinds."
     },
     {
      "item": "T04",
      "evidence": "UK-average zero line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A UK-average zero line is the benchmark."
     },
     {
      "item": "T37",
      "evidence": "emphasis typography",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Emphasis typography picks out key figures."
     },
     {
      "item": "T11",
      "evidence": "source line present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A source line names the data’s origin."
     }
    ],
    "siblings": [
@@ -542,7 +599,7 @@
    "dataset": "DB",
    "interactive": false,
    "regime": "directed",
-   "title": "The road came back \u2014 but not all the way",
+   "title": "The road came back — but not all the way",
    "chart": "bundle/charts/S7.png",
    "live": null,
    "keys": [
@@ -550,109 +607,127 @@
      "item": "T02",
      "evidence": "series labelled 'Health score'; footnote confesses it is the HGV series",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A series is labelled ‘Health score’; its definition is only given in a footnote."
     },
     {
      "item": "T14",
      "evidence": "COVID/context box with provisional-quarter facts",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A context box supplies outside facts (COVID, provisional quarters)."
     },
     {
      "item": "T22",
      "evidence": "decorative glow/shadow bands under lines",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Decorative glow and shadow bands sit under the lines."
     },
     {
      "item": "T24",
      "evidence": "second axis squashed 0-6; score annotated as '4.0 bn'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The second axis is squashed to 0–6, and the score is annotated ‘4.0 bn’."
     },
     {
      "item": "T26",
      "evidence": "dual axis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The chart uses two y-axes."
     },
     {
      "item": "T27",
      "evidence": "'The road came back'; long climb / sudden brake",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The layout reads as a journey — a long climb, then a sudden brake."
     },
     {
      "item": "T36",
      "evidence": "'65.7 bn' stated twice in one sentence + repeated in annotation",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "‘65.7 bn’ is stated twice in one sentence and again in an annotation."
     },
     {
      "item": "T39",
      "evidence": "scare quotes around 'Health score'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "‘Health score’ appears in quotation marks."
     },
     {
      "item": "T40",
      "evidence": "caption: 'A modest long-run reset'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The caption calls it ‘a modest long-run reset’."
     },
     {
      "item": "T44",
      "evidence": "'Like a tide that never quite returns'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "‘Like a tide that never quite returns.’"
     },
     {
      "item": "T17",
      "evidence": "context box: categories 'are not an all-traffic total'",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "A note says the categories ‘are not an all-traffic total’."
     },
     {
      "item": "T32",
      "evidence": "'Health score' = HGV series spliced under an unrelated name",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "According to the footnote, the ‘Health score’ series is the HGV series shown under another name."
     },
     {
      "item": "T08",
      "evidence": "4-quarter averaging",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Values are smoothed with four-quarter averaging."
     },
     {
      "item": "T10",
      "evidence": "binning/grouping",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The series are grouped into bins."
     },
     {
      "item": "T33",
      "evidence": "shaded disruption band",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A shaded band groups the disruption years."
     },
     {
      "item": "T37",
      "evidence": "emphasis typography",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Emphasis typography picks out key figures."
     },
     {
      "item": "T51",
      "evidence": "ordering",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Content is presented in a deliberate order."
     },
     {
      "item": "T11",
      "evidence": "source line present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A source line names the data’s origin."
     }
    ],
    "siblings": [
@@ -689,91 +764,106 @@
      "item": "T45",
      "evidence": "'The Cost of Living: Where Deprivation Exacts a Tax in Premature Death'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The title carries two meanings at once — ‘cost of living’ as prices and as lives."
     },
     {
      "item": "T54",
      "evidence": "'What pattern to look for:' explicit reading-instruction box",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A ‘What pattern to look for’ box tells you what to find."
     },
     {
      "item": "T50",
      "evidence": "England Avg IMD reference line, named in the guidance",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "An England-average line is pre-loaded as the comparison, and the guidance text points to it."
     },
     {
      "item": "T53",
      "evidence": "'Suggested Case Studies' chips + search placeholder 'e.g. Blackpool'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "‘Suggested Case Studies’ chips and the search hint ‘e.g. Blackpool’ steer where you look."
     },
     {
      "item": "T52",
      "evidence": "entrance/transition animation (verified live)",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Elements animate in when the page loads."
     },
     {
      "item": "T06",
      "evidence": "tier-filter buttons as filtering control",
      "source": "visual",
-     "status": "accepted-arguable"
+     "status": "accepted-arguable",
+     "seen": "Tier-filter buttons hand you the choice of what is included."
     },
     {
      "item": "T25",
-     "evidence": "'Every point\u2026 directly converts into years surrendered'",
+     "evidence": "'Every point… directly converts into years surrendered'",
      "source": "visual",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The text says every point of deprivation ‘directly converts into years surrendered’."
     },
     {
      "item": "T09",
      "evidence": "'2.6 times higher' headline stat",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A ‘2.6 times higher’ headline stat stands in for the detail."
     },
     {
      "item": "T29",
      "evidence": "valenced colours",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The colour palette carries emotional loading."
     },
     {
      "item": "T47",
      "evidence": "toggles/exploration",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Toggles invite exploration on set terms."
     },
     {
      "item": "T49",
      "evidence": "opinionated defaults",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "The page opens on an opinionated default view."
     },
     {
      "item": "T55",
      "evidence": "search box",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A search box invites you to look up a place."
     },
     {
      "item": "T04",
      "evidence": "average line",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "An average line marks the cut point."
     },
     {
      "item": "T37",
      "evidence": "emphasis",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "Emphasis typography picks out key figures."
     },
     {
      "item": "T11",
      "evidence": "kicker/source present",
      "source": "auto",
-     "status": "accepted"
+     "status": "accepted",
+     "seen": "A kicker/source line names the data’s origin."
     }
    ],
    "siblings": [

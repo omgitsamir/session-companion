@@ -32,6 +32,7 @@ iframe.stim{width:100%;height:78vh;border:1px solid var(--line);border-radius:6p
 .it .def{display:none;padding:4px 12px 10px;font-size:13.5px;color:#39475a;background:#fbfcff;border-top:1px dashed #e4e9f0}
 .it.open .def{display:block}
 .it .def .meta{color:#5b6b7d;font-size:11.5px;margin-bottom:3px}
+.it .def .where{margin-top:6px;padding-top:5px;border-top:1px dotted #dfe6ee;color:#2c3e55}
 .sibs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .sibs figure{margin:0;border:1px solid var(--line);border-radius:8px;padding:6px;background:#fff}
 .sibs img{width:100%;border-radius:4px}.sibs figcaption{font-size:12px;color:#5b6b7d;text-align:center;padding-top:4px}
@@ -328,9 +329,15 @@ function bankDuration(){ if(!phaseStart||S.stage!=="loop") return;
  const sl=S.order[S.idx], d=Math.round((Date.now()-phaseStart)/1000);
  S.stim[sl].durations[S.sub]=(S.stim[sl].durations[S.sub]||0)+d; phaseStart=null; save(); }
 /* ---------------- shared renderers (accordion item lists — definitions expand in place) ---------------- */
-function listEntry(id,d,keyed){
+function listEntry(id,d,keyed,seen){
  return `<div class="it${keyed?" keyed":""}" data-id="${id}"><div class="hd">${id} · ${d.name}</div>`+
-        `<div class="def"><div class="meta">${d.category} — ${d.family}</div>${d.definition}</div></div>`;
+        `<div class="def"><div class="meta">${d.category} — ${d.family}</div>${d.definition}`+
+        `${seen?`<div class="where"><b>Where in this chart:</b> ${esc(seen)}</div>`:""}</div></div>`;
+}
+function orderedKeys(keys){ // category-grouped, categories in order of first appearance
+ const order=[], bucket={};
+ keys.forEach(k=>{ const c=bundle.defs[k.item].category; if(!bucket[c]){bucket[c]=[];order.push(c);} bucket[c].push(k); });
+ return order.flatMap(c=>bucket[c]);
 }
 function fullListHTML(highlight){
  const cats={}; Object.entries(bundle.defs).forEach(([id,d])=>{(cats[d.category]=cats[d.category]||[]).push([id,d]);});
@@ -342,12 +349,10 @@ function fullListHTML(highlight){
  return h+"</div>";
 }
 function keyedListHTML(keys){ // reveal: ONLY the present items, grouped by category
- const cats={};
- keys.forEach(k=>{ const d=bundle.defs[k.item]; (cats[d.category]=cats[d.category]||[]).push([k.item,d]); });
- let h='<div class="itemlist" id="ilist">';
- for(const [cat,items] of Object.entries(cats)){
-  h+=`<div class="cat">${cat}</div>`;
-  for(const [id,d] of items) h+=listEntry(id,d,true);
+ let h='<div class="itemlist" id="ilist">', last=null;
+ for(const k of orderedKeys(keys)){ const d=bundle.defs[k.item];
+  if(d.category!==last){ h+=`<div class="cat">${d.category}</div>`; last=d.category; }
+  h+=listEntry(k.item,d,true,k.seen);
  }
  return h+"</div>";
 }
@@ -507,7 +512,7 @@ function revealProbesHTML(sl){
 }
 function hLoop(){
  const sl=curSlot(), sid=sl.slot, st=S.stim[sid];
- const rows=sl.keys.map(k=>{
+ const rows=orderedKeys(sl.keys).map(k=>{
   const arg=k.status.includes("arguable")?'<span class="arg">arguable</span>':"";
   return `<div class="row"><span class="nm"><b>${k.item}</b> ${bundle.defs[k.item].name} ${arg}<div class="small">${k.evidence}</div></span>
    ${tickBtn(sid,k.item,"u","U","spotted unprimed")}${tickBtn(sid,k.item,"e","E","endorsed at reveal")}${tickBtn(sid,k.item,"r","R","reportable here")}</div>`;}).join("");
