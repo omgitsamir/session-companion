@@ -90,11 +90,9 @@ table.data td,table.data th{border:1px solid var(--line);padding:2px 7px}table.d
 const CONFIG = {
  welcome_title: "Welcome, and thank you for taking part",
  welcome_body: [
- "In this session you will look at <b>eight data visualisations</b>, one at a time. Each was produced by an <b>AI system (a large language model, LLM)</b> from a real public dataset.",
- "And here's the idea: <b>visualisations are never neutral.</b> Whoever \u2014 or whatever \u2014 makes them chooses what to show, what to leave out, what to emphasise, how to word things, and how to frame it. <b>We want to understand this for LLM-generated visuals.</b>",
- "So here's the shape of the session, so nothing surprises you: <b>8 charts, roughly 6 minutes each</b>. For each chart you see, you look first and just think aloud \u2014 what <b>rhetorical or persuasive choices</b> do you notice, and what is it trying to make you <b>think, feel, or believe</b>? There are <b>no right or wrong answers</b> \u2014 you might spot things that seem deliberately added or left out, design that pulls your eye to one thing \u2014 or quietly away from another \u2014 or wording that nudges how you read the numbers.",
- "Once you've had your say, I'll show you what I had flagged in that chart and we'll compare notes.",
- ],
+  "In this session you will look at <b>8 data visualisations</b>, one at a time. Each was produced by an <b>AI system (a large language model, LLM)</b> from a real public dataset.",
+  "<b>Visualisations are never neutral.</b> Whoever — or whatever — makes them chooses what to show, what to leave out, what to emphasise, and how to frame it. For each one, tell us what you notice: what <b>rhetorical or persuasive choices</b> have been made, and what is this visualisation trying to make you <b>think, feel, or believe</b>? Think aloud — there are no right or wrong answers. For example: you may notice things that seem <b>deliberately added or left out</b>, design choices that <b>draw your attention</b> to one thing — or quietly pull it away from another — or wording that nudges how you read the numbers.",
+  "Afterwards we will show you a set of concepts and discuss which of them you saw."],
  elicit_instr: "Take your time with this visualisation. What <b>rhetorical or persuasive choices</b> has its maker made — in what is shown, left out, emphasised, worded, or framed? What is it trying to make you <b>think, feel, or believe</b>?",
  reveal_instr: "These are the <b>choices we identified</b> in this visualisation. Click any one to read what it means, and say whether you agree it is really here.",
  variant_instr: "The same instruction and data were given to <b>three other AI models</b>. Which rendering do you find most persuasive, and why? Click any image to enlarge it.",
@@ -184,7 +182,7 @@ const CONFIG = {
   variant:"Brief. One preference + one why. Do not analyse each sibling.",
   onec:"Full-map flexing. Run the two scales first, then the WHAT discussion: merges, removals, additions, hierarchy. HOW-to-report only if time remains.",
   debrief:"Thank them, brief the Round-2 questionnaire (short, emailed, confirms the revision), take any final notes, then Finish & export."},
- phase_seconds: {elicit:180, reveal:180}
+ phase_seconds: {elicit:180, reveal:120, variant:60}
 };
 /* ==================================================================================================== */
 const HOST = new URLSearchParams(location.search).has("host");
@@ -533,7 +531,7 @@ function hLoop(){
   <div><div class="card"><b>Key — tick as it happens</b><div class="ticks">${rows}</div></div>
    <div class="card"><b>Notes (${sid})</b><textarea id="snotes">${st.notes||""}</textarea></div>
    <div class="card"><button class="sec" id="prevSub">← Back</button>
-    <button id="nextSub" style="margin-left:6px">${S.sub==="elicit"?"Reveal →":(S.idx<7?"Next stimulus →":"To 1C →")}</button>
+    <button id="nextSub" style="margin-left:6px">${S.sub==="elicit"?"Reveal →":S.sub==="reveal"?"Variants →":(S.idx<7?"Next stimulus →":"To 1C →")}</button>
     <span class="small" style="margin-left:8px">stimulus ${S.idx+1} of 8 · phase: ${S.sub}</span></div></div></div>`;
  app.querySelectorAll(".tick").forEach(b=>b.onclick=()=>{
   const {sl:s2,it,f}=b.dataset, o=S.stim[s2].items[it]=S.stim[s2].items[it]||{};
@@ -546,12 +544,14 @@ function hLoop(){
  $("#nextSub").onclick=()=>{
   bankDuration();
   if(S.sub==="elicit"){S.sub="reveal";}
+  else if(S.sub==="reveal"){S.sub="variant";}
   else { if(S.idx<7){S.idx++;S.sub="elicit";} else {enter("onec");return;} }
   save(); enter("loop",true); };
  $("#prevSub").onclick=()=>{
   bankDuration();
-  if(S.sub==="reveal"){S.sub="elicit";}
-  else { if(S.idx>0){S.idx--;S.sub="reveal";} else {enter("welcome");return;} }
+  if(S.sub==="variant"){S.sub="reveal";}
+  else if(S.sub==="reveal"){S.sub="elicit";}
+  else { if(S.idx>0){S.idx--;S.sub="variant";} else {enter("welcome");return;} }
   save(); enter("loop",true); };
 }
 function hOnec(){
@@ -563,7 +563,7 @@ function hOnec(){
    <button id="toDebrief" style="margin-left:6px">To debrief →</button></div>`;
  $("#onotes").onchange=e=>{S.onec.notes=e.target.value;save();};
  $("#toDebrief").onclick=()=>enter("debrief");
- $("#backLoop").onclick=()=>{S.idx=7;S.sub="reveal";S.stage="loop";save();enter("loop",true);};
+ $("#backLoop").onclick=()=>{S.idx=7;S.sub="variant";S.stage="loop";save();enter("loop",true);};
 }
 function hDebrief(){
  app.innerHTML=`${cueBox("debrief")}
